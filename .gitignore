@@ -1,0 +1,6 @@
+*.exe
+*.lib
+*.a
+
+build_cl/
+build_gcc/
