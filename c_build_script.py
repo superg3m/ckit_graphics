@@ -26,7 +26,7 @@ project.set_treat_warnings_as_errors(True)
 project.set_debug_with_visual_studio(True)
 project.set_rebuild_project_dependencies(True)
 
-project.set_project_dependencies(["ckg"])
+project.set_project_dependencies([""])
 # -------------------------------------------------------------------------------------
 
 executable_procedure_libs = [f"../../../build_{COMPILER}/ckit_graphics.lib" if COMPILER == "cl" else f"../../../build_{COMPILER}/libckit_graphics.a"]
@@ -39,7 +39,7 @@ procedures = {
     "ckit_graphics_lib": {
         "build_directory": f"./build_{COMPILER}",
         "output_name": "ckit_graphics.lib" if COMPILER == "cl" else "libckit_graphics.a",
-        "source_files": ["../ckg/ckg.c", "../ckit.c"],
+        "source_files": ["../ckit_graphics.c"],
         "additional_libs": [],
         "compile_time_defines": ["CKIT_WSL"],
         "include_paths": [],
@@ -72,6 +72,6 @@ for procedure_name, procedure_data in procedures.items():
 	procedure.set_compile_time_defines(procedure_data["compile_time_defines"])
 	procedure.set_additional_libs(procedure_data["additional_libs"])
 # -------------------------------------------------------------------------------------
-project.set_executables_to_run(["ckit_test.exe"])
+project.set_executables_to_run(["ckit_graphics_test.exe"])
 
 project.build(build_type)

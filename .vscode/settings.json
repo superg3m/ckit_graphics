@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "ckit_graphics_native_window.h": "c",
-        "ckit_extern.h": "c"
+        "ckit_extern.h": "c",
+        "ckit_types.h": "c"
     }
 }

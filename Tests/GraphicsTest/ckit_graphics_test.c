@@ -1,4 +1,5 @@
-#include "../../ckit.h"
+#include "../../External_Libraries/ckit_extern.h"
+#include "../../External_Libraries/ckit_types.h"
 
 #if defined(PLATFORM_WINDOWS)
 	void set_bitmap_gradient(CKIT_Window* window, u32 x_offset, u32 y_offset) {

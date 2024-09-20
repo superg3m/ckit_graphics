@@ -141,16 +141,9 @@ typedef struct CKIT_Rectangle3D {
 	u32 height;
 } CKIT_Rectangle3D;
 
-#include "./ckg_types.h"
-#include "./ckg_logger.h"
-#include "./ckg_stack_trace.h"
-
 //========================== Begin Types ==========================
 #define CKG_ASSERT_ENABLED TRUE
 //=========================== End Types ===========================
-
-#include "../Include/ckg_logger.h"
-#include "../Include/ckg_memory.h"
 
 #if defined(_MSC_VER )
     #include <windows.h>
