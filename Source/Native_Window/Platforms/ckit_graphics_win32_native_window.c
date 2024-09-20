@@ -1,4 +1,5 @@
 #include "../../../Include/Native_Window/ckit_graphics_native_window.h"
+#include "../../../Include/Rendering_Backends/Backends/ckit_graphics_software_backend.h"
 
 typedef struct CKIT_WindowEntry {
 	HWND WINAPI_handle;
