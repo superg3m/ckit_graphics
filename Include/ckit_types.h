@@ -149,7 +149,6 @@ typedef struct CKIT_Rectangle3D {
 #define CKG_ASSERT_ENABLED TRUE
 //=========================== End Types ===========================
 
-#include "../Include/ckg_stack_trace.h"
 #include "../Include/ckg_logger.h"
 #include "../Include/ckg_memory.h"
 
