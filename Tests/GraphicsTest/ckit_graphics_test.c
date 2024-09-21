@@ -1,8 +1,5 @@
 #include "../../ckit_graphics.h"
 
-#include "../../External_Libraries/ckit_extern.h"
-#include "../../External_Libraries/ckit_types.h"
-
 #if defined(PLATFORM_WINDOWS)
 	void set_bitmap_gradient(CKIT_Window* window, u32 x_offset, u32 y_offset) {
 		int stride = window->bitmap.width * window->bitmap.bytes_per_pixel;
@@ -70,7 +67,7 @@ int main() {
 
 	size_t file_size = 0;
 	u8* ckit_sword_bmp_data = ckit_os_read_entire_file("../../../assets/Sword.bmp", &file_size);
-	CKIT_Bitmap sword_bitmap = ckit_graphics_load_bmp(ckit_sword_bmp_data, file_size);
+	CKIT_Bitmap sword_bitmap = ckit_parser_load_bmp(ckit_sword_bmp_data, file_size);
 	
 	s32 mouse_x = 0;
 	s32 mouse_y = 0;
