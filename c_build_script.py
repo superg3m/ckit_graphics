@@ -13,7 +13,7 @@ COMPILER = os.getenv("COMPILER", "cl")
 if os.name != "nt":
     COMPILER = "gcc"
 	
-project = Project("ckit", COMPILER)
+project = Project("ckit_graphics", COMPILER)
 
 # Do different things depending on the platform
 if COMPILER == "cl":
