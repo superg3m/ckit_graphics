@@ -66,7 +66,7 @@ procedures = {
 }
 
 for procedure_name, procedure_data in procedures.items():
-	if (procedure_name in ["ckit_graphics_test", "ckg_pong"]) and os.name != "nt":
+	if (procedure_name in ["ckit_graphics_test", "ckg_pong"]) and os.getenv("IS_DEPENDENCY", "False") == "True" and os.name != "nt":
 		continue
 
 	procedure = project.add_procedure(procedure_data["build_directory"])
