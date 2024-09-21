@@ -13,6 +13,9 @@
         "ckit_os.h": "c",
         "ckit_math.h": "c",
         "ckit_graphics_software_backend.h": "c",
-        "ckit_memory.h": "c"
+        "ckit_memory.h": "c",
+        "ckit_bmp_parser.h": "c",
+        "ckit_color.h": "c",
+        "ckit_vector.h": "c"
     }
 }
