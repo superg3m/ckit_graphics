@@ -5,6 +5,14 @@
         "ckit_types.h": "c",
         "windows.h": "c",
         "ckit_graphics.h": "c",
-        "dbghelp.h": "c"
+        "dbghelp.h": "c",
+        "ckg_logger.h": "c",
+        "ckg_assert.h": "c",
+        "ckit_assert.h": "c",
+        "ckit_logger.h": "c",
+        "ckit_os.h": "c",
+        "ckit_math.h": "c",
+        "ckit_graphics_software_backend.h": "c",
+        "ckit_memory.h": "c"
     }
 }

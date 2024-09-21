@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../External_Libraries/ckit_extern.h"
+#include "../../../External_Libraries/ckg_ckit_core/ckit_extern.h"
 
 void ckit_graphics_software_backend_draw_quad(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, CKIT_Rectangle2D quad, CKIT_Color color) {
 	const s32 VIEWPORT_WIDTH = framebuffer_width;
