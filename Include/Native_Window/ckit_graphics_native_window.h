@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ckit_types.h"
+#include "../../External_Libraries/ckit_extern.h"
 //========================== Begin Types ==========================
 typedef enum CKIT_CursorState {
 	DISABLED,
@@ -78,7 +78,7 @@ extern "C" {
 //************************* End Functions *************************
 
 //+++++++++++++++++++++++++++ Begin Macros ++++++++++++++++++++++++++
-#define ckit_window_draw_quad_custom(window, start_x, start_y, width, height, color) ckit_window_draw_quad(window, ckit_rectangle_create(start_x, start_y, width, height), color)
+#define ckit_window_draw_quad_custom(window, start_x, start_y, width, height, color) ckit_window_draw_quad(window, ckit_rectangle2d_create(start_x, start_y, width, height), color)
 #define ckit_window_free(window) window = MACRO_ckit_window_free(window);
 #define ckit_window_free(window) window = MACRO_ckit_window_free(window);
 //++++++++++++++++++++++++++++ End Macros +++++++++++++++++++++++++++

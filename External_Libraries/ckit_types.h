@@ -141,80 +141,66 @@ typedef struct CKIT_Rectangle3D {
 	u32 height;
 } CKIT_Rectangle3D;
 
-//========================== Begin Types ==========================
-#define CKG_ASSERT_ENABLED TRUE
-//=========================== End Types ===========================
+typedef enum CKG_LogLevel {
+    CKG_LOG_LEVEL_FATAL,
+    CKG_LOG_LEVEL_ERROR,
+    CKG_LOG_LEVEL_WARN,
+    CKG_LOG_LEVEL_DEBUG,
+    CKG_LOG_LEVEL_SUCCESS,
+    CKG_LOG_LEVEL_PRINT,
+    CKG_LOG_LEVEL_COUNT
+} CKG_LogLevel;
 
-#if defined(_MSC_VER )
-    #include <windows.h>
-    #include <DbgHelp.h>
-    #pragma comment(lib, "dbghelp")
-    void ckg_stack_trace_dump() {
-        CKG_LOG_PRINT("------------------ Error Stack Trace ------------------\n");
-        // Date: July 02, 2024
-        // NOTE(Jovanni): This only works for windows and when debug symbols are compiled into the program
-        void *stack[100];
-        unsigned short number_of_captured_frames;
-        SYMBOL_INFO *symbol;
-        HANDLE process;
+typedef enum CKIT_LogLevel {
+    LOG_LEVEL_FATAL,
+    LOG_LEVEL_ERROR,
+    LOG_LEVEL_WARN,
+    LOG_LEVEL_DEBUG,
+    LOG_LEVEL_SUCCESS,
+    LOG_LEVEL_PRINT,
+    LOG_LEVEL_COUNT
+} CKIT_LogLevel;
 
-        process = GetCurrentProcess();
-        SymInitialize(process, NULL, TRUE);
+typedef enum CKIT_MemoryTagID { // Reserved tags
+    TAG_USER_UNKNOWN,
 
-        number_of_captured_frames = CaptureStackBackTrace(0, 100, stack, NULL);
-        symbol = (SYMBOL_INFO *)ckg_alloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char));
-        symbol->MaxNameLen = 255;
-        symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+    TAG_CKIT_TEMP,
+    TAG_CKIT_CORE_STRING,
+    TAG_CKIT_CORE_ARENA,
+    TAG_CKIT_CORE_VECTOR,
+    TAG_CKIT_CORE_STACK,
+    TAG_CKIT_CORE_LINKED_LIST,
+    TAG_CKIT_CORE_QUEUE,
+    TAG_CKIT_CORE_IO,
+    TAG_CKIT_CORE_HASHMAP,
+    TAG_CKIT_CORE_HASHSET,
 
-        int count = 0;
-        for (int i = number_of_captured_frames - 4; i > 0; i--) {
-            DWORD64 displacement = 0;
-            if (SymFromAddr(process, (DWORD64)(stack[i]), &displacement, symbol)) {
-                DWORD displacementLine = 0;
-                IMAGEHLP_LINE64 line;
-                line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
-                if (SymGetLineFromAddr64(process, (DWORD64)(stack[i]), &displacementLine, &line)) {
-                    printf("%d: %s - %s:%d\n", count, symbol->Name, line.FileName, line.LineNumber);
-                } else {
-                    printf("%d: %s\n", count, symbol->Name);
-                }
-            }
-            count++;
-        }
+    TAG_CKIT_MODULE_LEXER,
+    TAG_CKIT_MODULE_FILE_FORMAT_PARSER_BMP,
+    TAG_CKIT_MODULE_FILE_FORMAT_PARSER_OBJ,
+    TAG_CKIT_MODULE_FILE_FORMAT_PARSER_PNG,
+    TAG_CKIT_MODULE_FILE_FORMAT_PARSER_JSON,
 
-        ckg_free(symbol);
-        CKG_LOG_PRINT("------------------ Error Stack Trace End ------------------\n");
-    }
-#elif defined(__GNUC__)
-    void ckg_stack_trace_dump() {
-        CKG_LOG_PRINT("------------------ Error Stack Trace ------------------\n");
-        // backtrace
-        CKG_LOG_PRINT("------------------ Error Stack Trace End ------------------\n");
-    }
-#endif
+    TAG_CKIT_EXPECTED_USER_FREE,
 
-//+++++++++++++++++++++++++++ Begin Macros ++++++++++++++++++++++++++
-#if CKG_ASSERT_ENABLED == TRUE	   
-    #define ckg_assert(expression)                            \
-    do {                                                      \
-        if (!(expression)) {                                  \
-            ckg_stack_trace_dump();                           \
-            char msg[] = "Func: %s, File: %s:%d\n";           \
-            CKG_LOG_FATAL(msg, __func__, __FILE__, __LINE__); \
-            CRASH;                                            \
-        }                                                     \
-    } while (FALSE)
+    TAG_CKIT_RESERVED_COUNT
+} CKIT_MemoryTagID;
 
-    #define ckg_assert_msg(expression, message, ...)	\
-        do {                                            \
-            if (!(expression)) {                        \
-                ckg_stack_trace_dump();                 \
-                CKG_LOG_FATAL(message, ##__VA_ARGS__);  \
-                CRASH;                                  \
-            }                                           \
-        } while (FALSE)
-#else
-        #define ckg_assert(expression)
-        #define ckg_assert_msg(expression, message, ...)
-#endif
-//++++++++++++++++++++++++++++ End Macros +++++++++++++++++++++++++++
+typedef struct CKIT_VectorHeader {
+	u32 count;
+	u32 capacity;
+	char* magic;
+	// Boolean is_pointer_type (if I know this then I can use arenas way way smarter, but actually maybe it doesn't matter maybe I need to rework arenas s
+	// it adds pages of memory and it links those together instead of copying and reallocing.)
+} CKIT_VectorHeader;
+
+#define CKIT_COLOR_BLACK (CKIT_Color){0, 0, 0, 255}
+#define CKIT_COLOR_RED (CKIT_Color){255, 0, 0, 255}
+#define CKIT_COLOR_BLUE (CKIT_Color){0, 0, 255, 255}
+#define CKIT_COLOR_GREEN (CKIT_Color){0, 255, 0, 255}
+#define CKIT_COLOR_WHITE (CKIT_Color){255, 255, 255, 255}
+#define CKIT_COLOR_PINK (CKIT_Color){255, 105, 180, 255}
+#define CKIT_COLOR_LIME (CKIT_Color){0, 255, 128, 255}
+#define CKIT_COLOR_CYAN (CKIT_Color){0, 255, 255, 255}
+#define CKIT_COLOR_PURPLE (CKIT_Color){128, 0, 128, 255}
+#define CKIT_COLOR_YELLOW (CKIT_Color){255, 255, 0, 255}

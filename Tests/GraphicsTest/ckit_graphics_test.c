@@ -1,3 +1,5 @@
+#include "../../ckit_graphics.h"
+
 #include "../../External_Libraries/ckit_extern.h"
 #include "../../External_Libraries/ckit_types.h"
 
@@ -90,13 +92,13 @@ int main() {
 
 
 			if (left_check || right_check) {
-				x_velocity *= -1.025;
+				x_velocity *= -1.025f;
 				close_factor += 2;
 				x_pos += x_velocity * 5;
 			}
 
 			if (bottom_check || top_check) {
-				y_velocity *= -1.025;
+				y_velocity *= -1.025f;
 				close_factor += 2;
 				y_pos += y_velocity * 5;
 			}
@@ -114,14 +116,14 @@ int main() {
 			ckit_window_draw_circle(window, mouse_x, mouse_y, (mouse_x / 2), TRUE, ((CKIT_Color){255, 0, 0, 105}));
 
 			float pixel_offset_from_the_top = (border_size / 2);
-			float center_x = width_with_padding / 2;
-			float center_y = (height_with_padding / 2) + pixel_offset_from_the_top;
+			s32 center_x = width_with_padding / 2;
+			s32 center_y = (height_with_padding / 2) + pixel_offset_from_the_top;
 			float adjusted_width = (width_with_padding + border_size) - (close_factor * 2);
 			float adjusted_height = (height_with_padding + border_size) - (close_factor * 2);
 
-			float right_x = width_with_padding - close_factor;
-			float top_y = close_factor + pixel_offset_from_the_top;
-			float bottom_y = height_with_padding - close_factor + pixel_offset_from_the_top;
+			s32 right_x = width_with_padding - close_factor;
+			s32 top_y = close_factor + pixel_offset_from_the_top;
+			s32 bottom_y = height_with_padding - close_factor + pixel_offset_from_the_top;
 
 			ckit_window_draw_quad_custom(window, close_factor, center_y, border_size, adjusted_height, CKIT_COLOR_GREEN); // left
 			ckit_window_draw_quad_custom(window, right_x, center_y, border_size, adjusted_height, CKIT_COLOR_BLUE); // right

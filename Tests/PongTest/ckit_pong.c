@@ -1,4 +1,4 @@
-#include "../../ckit.h"
+#include "../../ckit_graphics.h"
 
 u32 half_player_width = 0;
 u32 half_player_height = 0;
@@ -12,7 +12,7 @@ CKIT_Rectangle2D create_player() {
 	half_player_width = player_width / 2;
 	half_player_height = player_height / 2;
 
-	return ckit_rectangle_create(player_x_pos + half_player_width, player_y_pos - half_player_height, player_width, player_height);
+	return ckit_rectangle2d_create(player_x_pos + half_player_width, player_y_pos - half_player_height, player_width, player_height);
 }
 
 CKIT_Rectangle2D create_ball(u32 window_width, u32 window_height) {
@@ -21,7 +21,7 @@ CKIT_Rectangle2D create_ball(u32 window_width, u32 window_height) {
 	const u32 ball_radius = 5;
 	const u32 ball_diameter = ball_radius * 2;
 
-	return ckit_rectangle_create(ball_x_pos, ball_y_pos, ball_diameter, ball_diameter);
+	return ckit_rectangle2d_create(ball_x_pos, ball_y_pos, ball_diameter, ball_diameter);
 }
 
 CKIT_Rectangle2D create_ai(u32 window_width, u32 window_height) {
@@ -33,7 +33,7 @@ CKIT_Rectangle2D create_ai(u32 window_width, u32 window_height) {
 
 	const u32 half_ai_width = ai_width / 2;
 	const u32 half_ai_height = ai_height / 2;
-	return ckit_rectangle_create(ai_x_pos, ai_y_pos, ai_width, ai_height);
+	return ckit_rectangle2d_create(ai_x_pos, ai_y_pos, ai_width, ai_height);
 }
 
 int main() {
@@ -75,18 +75,18 @@ int main() {
 
 	// ckit_window_set_cursor_state(window, DISABLED);
 
-	const CKIT_Rectangle2D x_axis_rect = ckit_rectangle_create(window->bitmap.width/2, height_with_padding, window->bitmap.width, 1);
-	const CKIT_Rectangle2D y_axis_rect = ckit_rectangle_create(width_with_padding, window->bitmap.height/2, 1, window->bitmap.height);
+	const CKIT_Rectangle2D x_axis_rect = ckit_rectangle2d_create(window->bitmap.width/2, height_with_padding, window->bitmap.width, 1);
+	const CKIT_Rectangle2D y_axis_rect = ckit_rectangle2d_create(width_with_padding, window->bitmap.height/2, 1, window->bitmap.height);
 
 
 	int mouse_x, mouse_y = 0;
 	while (!ckit_window_should_quit(window)) {
 		{ // UPDATE
-			Boolean left_check   = ball_rect.x <= 0;
-			Boolean right_check  = (ball_rect.x + ball_rect.width) >= width_with_padding;
+			Boolean left_check   = ball_rect.position.x <= 0;
+			Boolean right_check  = (ball_rect.position.x + ball_rect.width) >= width_with_padding;
 
-			Boolean bottom_check = ball_rect.y <= 0;
-			Boolean top_check    = (ball_rect.y + ball_rect.height) >= height_with_padding;
+			Boolean bottom_check = ball_rect.position.y <= 0;
+			Boolean top_check    = (ball_rect.position.y + ball_rect.height) >= height_with_padding;
 
 			if (left_check || right_check) {
 				ball_x_velocity *= -1;
@@ -112,13 +112,13 @@ int main() {
 				ball_x_velocity *= -1;
 			}
 						
-			ai_rect.y = ball_rect.y;
+			ai_rect.position.y = ball_rect.position.y;
 
-			ball_rect.x += ball_x_velocity;
-			ball_rect.y += ball_y_velocity;
+			ball_rect.position.x += ball_x_velocity;
+			ball_rect.position.y += ball_y_velocity;
 
 			ckit_window_get_mouse_position(window, &mouse_x, &mouse_y);
-			player_rect.y = mouse_y;
+			player_rect.position.y = mouse_y;
 		}
 
 

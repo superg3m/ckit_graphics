@@ -26,10 +26,13 @@ project.set_treat_warnings_as_errors(True)
 project.set_debug_with_visual_studio(True)
 project.set_rebuild_project_dependencies(True)
 
-project.set_project_dependencies([""])
+project.set_project_dependencies(["ckit"])
 # -------------------------------------------------------------------------------------
 
-executable_procedure_libs = [f"../../../build_{COMPILER}/ckit_graphics.lib" if COMPILER == "cl" else f"../../../build_{COMPILER}/libckit_graphics.a"]
+executable_procedure_libs = [
+	f"../../../build_{COMPILER}/ckit_graphics.lib" if COMPILER == "cl" else f"../../../build_{COMPILER}/libckit_graphics.a", 
+	f"../../../ckit/build_{COMPILER}/ckit.lib" if COMPILER == "cl" else f"../../../ckit/build_{COMPILER}/libckit.a"
+]
 
 if os.name == "nt":
 	windows_libs = ["User32.lib", "Gdi32.lib"] if COMPILER == "cl" else ["-lUser32", "-lGdi32"]
@@ -65,13 +68,15 @@ procedures = {
 for procedure_name, procedure_data in procedures.items():
 	if (procedure_name in ["ckit_graphics_test", "ckg_pong"]) and os.name != "nt":
 		continue
+
 	procedure = project.add_procedure(procedure_data["build_directory"])
 	procedure.set_output_name(procedure_data["output_name"])
 	procedure.set_source_files(procedure_data["source_files"])
 	procedure.set_include_paths(procedure_data["include_paths"])
 	procedure.set_compile_time_defines(procedure_data["compile_time_defines"])
 	procedure.set_additional_libs(procedure_data["additional_libs"])
+
 # -------------------------------------------------------------------------------------
-project.set_executables_to_run(["ckit_graphics_test.exe"])
+project.set_executables_to_run(["ckit_graphics.lib"])
 
 project.build(build_type)

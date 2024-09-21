@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../External_Libraries/ckit_types.h"
+
 #if defined(PLATFORM_WINDOWS)
 	#include "./Platforms/ckit_graphics_win32_native_window.c"
 #elif defined(PLATFORM_LINUX)
