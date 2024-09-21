@@ -46,3 +46,4 @@ c_build/
 *.ps1
 !bootstrap.ps1
 ckg/
+ckit/
