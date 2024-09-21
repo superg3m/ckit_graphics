@@ -77,6 +77,6 @@ for procedure_name, procedure_data in procedures.items():
 	procedure.set_additional_libs(procedure_data["additional_libs"])
 
 # -------------------------------------------------------------------------------------
-project.set_executables_to_run(["ckit_graphics.lib"])
+project.set_executables_to_run(["ckit_graphics.lib" if COMPILER == "cl" else f"libckit_graphics.a"])
 
 project.build(build_type)
