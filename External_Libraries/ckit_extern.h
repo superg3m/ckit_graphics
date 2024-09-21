@@ -1,5 +1,11 @@
 #pragma once 
 
+// Date: September 21, 2024
+// NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
+// NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
+// NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
+// NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
+
 #include "../../ckit/Include/ckit_types.h"
 
 #include "../../ckit/ckg/Include/ckg_logger.h"
