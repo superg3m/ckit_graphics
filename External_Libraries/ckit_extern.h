@@ -5,6 +5,7 @@
 // NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
 // NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
 // NOTE(Jovanni): I DON'T THINK I LIKE THIS AT ALL???
+// NOTE(Jovanni): Maybe the way i'm thinking about this is wrong?
 
 #include "../../ckit/Include/ckit_types.h"
 
