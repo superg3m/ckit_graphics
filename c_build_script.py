@@ -35,17 +35,17 @@ executable_procedure_libs = [
 ]
 
 if os.name == "nt":
-	windows_libs = ["User32.lib", "Gdi32.lib"] if COMPILER == "cl" else ["-lUser32", "-lGdi32"]
+	windows_libs = ["User32.lib", "Gdi32.lib", "opengl32.lib"] if COMPILER == "cl" else ["-lUser32", "-lGdi32", "-lopengl32"]
 	executable_procedure_libs += windows_libs
 
 procedures = {
     "ckit_graphics_lib": {
         "build_directory": f"./build_{COMPILER}",
         "output_name": "ckit_graphics.lib" if COMPILER == "cl" else "libckit_graphics.a",
-        "source_files": ["../ckit_graphics.c"],
+        "source_files": ["../ckit_graphics.c", "../External_Libraries/stb_image.c", "../External_Libraries/glad/src/glad.c"],
         "additional_libs": [],
         "compile_time_defines": ["CKIT_WSL"],
-        "include_paths": [],
+        "include_paths": ["../External_Libraries/glad/include"],
     },
 	"ckit_graphics_test": {
         "build_directory": f"./Tests/GraphicsTest/build_{COMPILER}",
@@ -53,7 +53,7 @@ procedures = {
         "source_files": ["../*.c"],
         "additional_libs": executable_procedure_libs,
 		"compile_time_defines": ["CKIT_WSL"],
-        "include_paths": [],
+        "include_paths": ["../../../External_Libraries/glad/include"],
     },
     "ckg_pong": {
         "build_directory": f"./Tests/PongTest/build_{COMPILER}",
@@ -61,7 +61,7 @@ procedures = {
         "source_files": ["../*.c"],
         "additional_libs": executable_procedure_libs,
         "compile_time_defines": ["CKIT_WSL"],
-        "include_paths": [],
+        "include_paths": ["../../../External_Libraries/glad/include"],
     },
 }
 
