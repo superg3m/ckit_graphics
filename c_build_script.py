@@ -45,7 +45,7 @@ procedures = {
         "source_files": ["../ckit_graphics.c", "../External_Libraries/stb_image.c", "../External_Libraries/glad/src/glad.c"],
         "additional_libs": [],
         "compile_time_defines": ["CKIT_WSL"],
-        "include_paths": ["../External_Libraries/glad/include"],
+        "include_paths": [""],
     },
 	"ckit_graphics_test": {
         "build_directory": f"./Tests/GraphicsTest/build_{COMPILER}",
@@ -53,7 +53,7 @@ procedures = {
         "source_files": ["../*.c"],
         "additional_libs": executable_procedure_libs,
 		"compile_time_defines": ["CKIT_WSL"],
-        "include_paths": ["../../../External_Libraries/glad/include"],
+        "include_paths": [""],
     },
     "ckg_pong": {
         "build_directory": f"./Tests/PongTest/build_{COMPILER}",
@@ -61,7 +61,7 @@ procedures = {
         "source_files": ["../*.c"],
         "additional_libs": executable_procedure_libs,
         "compile_time_defines": ["CKIT_WSL"],
-        "include_paths": ["../../../External_Libraries/glad/include"],
+        "include_paths": [""],
     },
 }
 
