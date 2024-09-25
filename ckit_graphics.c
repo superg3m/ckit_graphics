@@ -1,2 +1,2 @@
-#include "./Source/Native_Window/ckit_graphics_native_window.c"
-#include "./Source/Rendering_Backends/Backends/ckit_graphics_software_backend.c"
+#define CKIT_GRAPHICS_IMPL
+#include "./ckit_graphics.h"

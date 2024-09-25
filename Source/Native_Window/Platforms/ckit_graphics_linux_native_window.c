@@ -45,7 +45,6 @@ int main() {
 	return 0;
 }
 */
-#include "../../../Include/Native_Window/ckit_graphics_native_window.h"
 
 CKIT_Window* ckit_window_create(u32 width, u32 height, const char* name) {
 	CKIT_Window* ret_window = ckit_alloc(sizeof(CKIT_Window));

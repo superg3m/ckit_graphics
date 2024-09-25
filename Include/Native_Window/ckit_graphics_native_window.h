@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../External_Libraries/ckit_extern.h"
 //========================== Begin Types ==========================
 typedef enum CKIT_CursorState {
 	DISABLED,
