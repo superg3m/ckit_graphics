@@ -26,7 +26,7 @@ project.set_treat_warnings_as_errors(True)
 project.set_debug_with_visual_studio(True)
 project.set_rebuild_project_dependencies(True)
 
-project.set_project_dependencies([""])
+project.set_project_dependencies(["ckit"])
 # -------------------------------------------------------------------------------------
 
 executable_procedure_libs = [

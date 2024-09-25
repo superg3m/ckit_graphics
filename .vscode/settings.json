@@ -16,6 +16,7 @@
         "ckit_memory.h": "c",
         "ckit_bmp_parser.h": "c",
         "ckit_color.h": "c",
-        "ckit_vector.h": "c"
+        "ckit_vector.h": "c",
+        "ckit_string.h": "c"
     }
 }
