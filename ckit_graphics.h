@@ -21,12 +21,11 @@
 #define CKIT_GRAPHICS_INCLUDE_RENDERER
 
 #if defined(CKIT_GRAPHICS_INCLUDE_NATIVE_WINDOW)
-    typedef enum CKIT_CursorState {
-        DISABLED,
-        ENABLED,
-        POINTER,
-        GRAB,
-    } CKIT_CursorState;
+    typedef u8 CKIT_CursorState;
+    #define CKIT_CURSOR_STATE_DISABLED 0
+    #define CKIT_CURSOR_STATE_ENABLED 1
+    #define CKIT_CURSOR_STATE_POINTER 2
+    #define CKIT_CURSOR_STATE_GRAB 3
 
     #if defined(PLATFORM_WINDOWS)
         #include <windows.h>
@@ -426,11 +425,11 @@
 
         void ckit_window_set_cursor_state(CKIT_Window* window, CKIT_CursorState cursor_state) {
             switch (cursor_state) {
-                case ENABLED: {
+                case CKIT_CURSOR_STATE_ENABLED: {
                     ShowCursor(TRUE);
                 }
 
-                case DISABLED: {
+                case CKIT_CURSOR_STATE_DISABLED: {
                     ShowCursor(FALSE);
                 }
             }
