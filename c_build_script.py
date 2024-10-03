@@ -11,7 +11,7 @@ compiler_treat_warnings_as_errors = True
 
 project_name = "ckit_graphics"
 project_dependencies = ["ckit"]
-project_rebuild_project_dependencies = True
+project_rebuild_project_dependencies = False
 project_debug_with_visual_studio = True
 project_executable_procedures = ["ckit_graphics_test.exe"]
 
