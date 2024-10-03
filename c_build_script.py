@@ -13,7 +13,7 @@ project_name = "ckit_graphics"
 project_dependencies = ["ckit"]
 project_rebuild_project_dependencies = False
 project_debug_with_visual_studio = True
-project_executable_procedures = ["ckit_graphics_test.exe"]
+project_executable_procedures = ["ckit_graphics_test.exe", "ckit_pong.exe"]
 
 # Do different things depending on the platform
 if compiler_name == "cl":
