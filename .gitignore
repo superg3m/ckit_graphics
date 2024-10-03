@@ -47,3 +47,4 @@ c_build/
 !bootstrap.ps1
 ckg/
 ckit/
+c_build_dependency_cache_*.json
