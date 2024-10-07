@@ -7,7 +7,7 @@
 #endif
 
 #define CKIT_EXTERN
-#include "../ckit/ckit.h"
+#include "./ckit/ckit.h"
 
 #if defined(CKIT_GRAPHICS_IMPL)
     #define CKIT_GRAPHICS_IMPL_NATIVE_WINDOW
