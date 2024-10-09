@@ -80,6 +80,7 @@ int main() {
 
 
 	int mouse_x, mouse_y = 0;
+	const float OFFSET = 2.0f;
 	while (!ckit_window_should_quit(window)) {
 		{ // UPDATE
 			Boolean left_check   = ball_rect.position.x <= 0;
@@ -104,18 +105,20 @@ int main() {
 				player_hit = TRUE;
 				ai_hit = FALSE;
 				ball_x_velocity *= -1;
+				
 			}
 
 			if (ckit_rectangle_check_aabb_collision(ai_rect, ball_rect)) {
 				player_hit = FALSE;
 				ai_hit = TRUE;
 				ball_x_velocity *= -1;
+				ball_rect.position.x += ball_x_velocity * OFFSET;
 			}
 						
 			ai_rect.position.y = ball_rect.position.y;
-
 			ball_rect.position.x += ball_x_velocity;
 			ball_rect.position.y += ball_y_velocity;
+
 
 			ckit_window_get_mouse_position(window, &mouse_x, &mouse_y);
 			player_rect.position.y = mouse_y;
