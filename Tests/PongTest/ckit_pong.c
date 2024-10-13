@@ -44,7 +44,6 @@ int main() {
 	u32 width_padding = 2;
 	u32 height_padding = 2;
 
-
 	LOG_FATAL("TESTING\n");
 	LOG_ERROR("TESTING\n");
 	LOG_WARN("TESTING\n");
@@ -105,7 +104,6 @@ int main() {
 				player_hit = TRUE;
 				ai_hit = FALSE;
 				ball_x_velocity *= -1;
-				
 			}
 
 			if (ckit_rectangle_check_aabb_collision(ai_rect, ball_rect)) {
