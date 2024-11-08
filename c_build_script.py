@@ -4,14 +4,12 @@ from c_build.source.Manager import *
 # --------------------------------------------------------------------------------------s
 
 compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "cl"
-compiler_std_version = "c11"
 compiler_warning_level = ""
 compiler_disable_specific_warnings = []
 compiler_treat_warnings_as_errors = True
 
 project_name = "ckit_graphics"
 project_dependencies = ["ckit"]
-project_rebuild_project_dependencies = False
 project_debug_with_visual_studio = True
 project_executable_procedures = ["ckit_graphics_test.exe", "ckit_pong.exe"]
 
