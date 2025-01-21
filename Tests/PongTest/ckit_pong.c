@@ -150,6 +150,6 @@ int main() {
 
 	ckit_window_free(window); // hmm how can I make this safer?
 
-	ckit_cleanup();
+	ckit_cleanup(TRUE);
 	return 0;
 }

@@ -112,25 +112,25 @@ int main() {
 			ckit_window_draw_bitmap(window, sword_bitmap.width * (mouse_x / 16), sword_bitmap.height * (mouse_x / 32), (mouse_x / 16), sword_bitmap);
 			ckit_window_draw_circle(window, mouse_x, mouse_y, (mouse_x / 2), TRUE, ((CKIT_Color){255, 0, 0, 105}));
 
-			float pixel_offset_from_the_top = (border_size / 2);
+			float pixel_offset_from_the_top = ((float)border_size / 2.0);
 			s32 center_x = width_with_padding / 2;
-			s32 center_y = (height_with_padding / 2) + pixel_offset_from_the_top;
-			float adjusted_width = (width_with_padding + border_size) - (close_factor * 2);
-			float adjusted_height = (height_with_padding + border_size) - (close_factor * 2);
+			s32 center_y = (height_with_padding / 2) + (s32)pixel_offset_from_the_top;
+			float adjusted_width = (float)((s32)(width_with_padding + border_size) - (s32)(close_factor * 2));
+			float adjusted_height = (float)((s32)(height_with_padding + border_size) - (s32)(close_factor * 2));
 
 			s32 right_x = width_with_padding - close_factor;
-			s32 top_y = close_factor + pixel_offset_from_the_top;
-			s32 bottom_y = height_with_padding - close_factor + pixel_offset_from_the_top;
+			s32 top_y = close_factor + (s32)pixel_offset_from_the_top;
+			s32 bottom_y = (s32)(height_with_padding - close_factor + (s32)pixel_offset_from_the_top);
 
-			ckit_window_draw_quad_custom(window, close_factor, center_y, border_size, adjusted_height, CKIT_COLOR_GREEN); // left
-			ckit_window_draw_quad_custom(window, right_x, center_y, border_size, adjusted_height, CKIT_COLOR_BLUE); // right
-			ckit_window_draw_quad_custom(window, center_x, top_y, adjusted_width, border_size, CKIT_COLOR_PURPLE); // top
-			ckit_window_draw_quad_custom(window, center_x, bottom_y, adjusted_width, border_size, CKIT_COLOR_RED); // bottom
+			ckit_window_draw_quad_custom(window, (u32)close_factor, (u32)center_y, (s32)border_size, (s32)adjusted_height, CKIT_COLOR_GREEN); // left
+			ckit_window_draw_quad_custom(window, (u32)right_x, (u32)center_y, (s32)border_size, (s32)adjusted_height, CKIT_COLOR_BLUE); // right
+			ckit_window_draw_quad_custom(window, (u32)center_x, (u32)top_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_PURPLE); // top
+			ckit_window_draw_quad_custom(window, (u32)center_x, (u32)bottom_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_RED); // bottom
 
 
-			ckit_window_draw_quad_custom(window, (s32)width / 2, (s32)height / 2, 400, 200, ((CKIT_Color){20, 20, 20, 150}));
-			ckit_window_draw_quad_custom(window, (s32)x_pos, (s32)y_pos, player_width, player_height, ((CKIT_Color){0, 255, 0, 75}));
-			ckit_window_draw_quad_custom(window, (s32)x_pos, (s32)y_pos, center_width, center_height, CKIT_COLOR_PURPLE);
+			ckit_window_draw_quad_custom(window, (u32)width / 2, (u32)height / 2, 400, 200, ((CKIT_Color){20, 20, 20, 150}));
+			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)player_width, (s32)player_height, ((CKIT_Color){0, 255, 0, 75}));
+			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)center_width, (s32)center_height, CKIT_COLOR_PURPLE);
 
 			ckit_window_swap_buffers(window);
 		}
@@ -138,9 +138,9 @@ int main() {
 		double end_counter = ckit_os_query_performance_counter();
 		double milliseconds_per_frame = end_counter - start_counter;
 		double seconds_per_frame = milliseconds_per_frame / 1000.0;
-		u64 fps = 1.0 / seconds_per_frame;
+		u64 fps = (u64)(1.0 / seconds_per_frame);
 
-		LOG_SUCCESS("%llfms / FPS: %d\n", milliseconds_per_frame, fps);
+		LOG_SUCCESS("%llfms / FPS: %lld\n", milliseconds_per_frame, fps);
 
 		start_counter = end_counter;
 	}
@@ -148,6 +148,6 @@ int main() {
 	ckit_window_free(window); // hmm how can I make this safer?
 	ckit_free(ckit_sword_bmp_data);
 
-	ckit_cleanup();
+	ckit_cleanup(TRUE);
 	return 0;
 }
