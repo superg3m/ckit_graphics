@@ -107,10 +107,15 @@ int main() {
 		}
 
 		{ // RENDER
-			ckit_window_clear_color(window, (CKIT_Color){55, 55, 55, 255});
+			CKIT_Color grey = {55, 55, 55, 255};
+			CKIT_Color black = {20, 20, 20, 150};
+			CKIT_Color red = {255, 0, 0, 105};
+			CKIT_Color green = {0, 255, 0, 75};
+
+			ckit_window_clear_color(window, grey);
 
 			ckit_window_draw_bitmap(window, sword_bitmap.width * (mouse_x / 16), sword_bitmap.height * (mouse_x / 32), (mouse_x / 16), sword_bitmap);
-			ckit_window_draw_circle(window, mouse_x, mouse_y, (mouse_x / 2), TRUE, ((CKIT_Color){255, 0, 0, 105}));
+			ckit_window_draw_circle(window, mouse_x, mouse_y, (mouse_x / 2), TRUE, red);
 
 			float pixel_offset_from_the_top = ((float)border_size / 2.0);
 			s32 center_x = width_with_padding / 2;
@@ -128,8 +133,8 @@ int main() {
 			ckit_window_draw_quad_custom(window, (u32)center_x, (u32)bottom_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_RED); // bottom
 
 
-			ckit_window_draw_quad_custom(window, (u32)width / 2, (u32)height / 2, 400, 200, ((CKIT_Color){20, 20, 20, 150}));
-			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)player_width, (s32)player_height, ((CKIT_Color){0, 255, 0, 75}));
+			ckit_window_draw_quad_custom(window, (u32)width / 2, (u32)height / 2, 400, 200, black);
+			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)player_width, (s32)player_height, green);
 			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)center_width, (s32)center_height, CKIT_COLOR_PURPLE);
 
 			ckit_window_swap_buffers(window);

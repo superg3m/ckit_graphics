@@ -600,7 +600,7 @@
     void ckit_shader_check_compile_erros(u32 shaderID, const char* type) {
         int success;
         char info_log[1024];
-        if (type != "PROGRAM") {
+        if (ckit_str_equal((const String)type, (const String)"PROGRAM")) {
             glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
             if (!success) {
                 glGetShaderInfoLog(shaderID, 1024, NULL, info_log);

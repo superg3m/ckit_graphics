@@ -3,7 +3,7 @@ from c_build.source.Utilities import *
 from c_build.source.Manager import *
 # --------------------------------------------------------------------------------------s
 
-compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "cl"
+compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "gcc"
 compiler_warning_level = ""
 compiler_disable_specific_warnings = []
 compiler_treat_warnings_as_errors = True
@@ -13,7 +13,7 @@ compiler_disable_sanitizer = True
 project_name = "ckit_graphics"
 project_dependencies = ["ckit"]
 project_debug_with_visual_studio = True
-project_rebuild_project_dependencies = True
+project_rebuild_project_dependencies = False
 project_executable_procedures = ["ckit_graphics_test.exe", "ckit_pong.exe"]
 
 # Do different things depending on the platform
@@ -22,7 +22,7 @@ if compiler_name == "cl":
 	compiler_disable_specific_warnings = ["5105", "4668", "4820", "4996"]
 elif compiler_name in ["gcc", "cc", "clang"]:
 	compiler_warning_level = "all"
-	compiler_disable_specific_warnings = ["deprecated", "pointer-sign", "parentheses"]
+	compiler_disable_specific_warnings = ["deprecated", "pointer-sign", "parentheses", "unused-variable", "missing-braces"]
 
 executable_procedure_libs = [
 	f"../../../build_{compiler_name}/{C_BUILD_LIB("ckit_graphics", compiler_name)}", 
