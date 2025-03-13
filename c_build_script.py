@@ -3,7 +3,7 @@ from c_build.source.Utilities import *
 from c_build.source.Manager import *
 # --------------------------------------------------------------------------------------s
 
-compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "gcc"
+compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "cl"
 compiler_warning_level = ""
 compiler_disable_specific_warnings = []
 compiler_treat_warnings_as_errors = True
@@ -40,6 +40,7 @@ procedures_config = {
         "source_files": ["../ckit_graphics.c", "../External_Libraries/stb_image.c", "../External_Libraries/glad/src/glad.c"],
         "additional_libs": [],
         "compile_time_defines": ["CKIT_WSL"],
+        "compiler_inject_into_args": [],
         "include_paths": [""],
     },
 	"ckit_graphics_test": {
@@ -48,6 +49,7 @@ procedures_config = {
         "source_files": ["../*.c"],
         "additional_libs": executable_procedure_libs,
 		"compile_time_defines": ["CKIT_WSL"],
+        "compiler_inject_into_args": [],
         "include_paths": [""],
     },
     "ckg_pong": {
@@ -56,6 +58,7 @@ procedures_config = {
         "source_files": ["../*.c"],
         "additional_libs": executable_procedure_libs,
         "compile_time_defines": ["CKIT_WSL"],
+        "compiler_inject_into_args": [],
         "include_paths": [""],
     },
 }
