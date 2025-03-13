@@ -20,7 +20,7 @@ pc: ProjectConfig = ProjectConfig(
     project_name = "ckit_graphics",
     project_dependencies = ["ckit"],
     project_debug_with_visual_studio = True,
-    project_rebuild_project_dependencies = False,
+    project_rebuild_project_dependencies = True,
     project_executable_procedures  = ["ckit_graphics_test.exe", "ckit_pong.exe"]
 )
 
@@ -28,7 +28,7 @@ cc: CompilerConfig = CompilerConfig(
     compiler_name = C_BUILD_COMPILER_NAME() if C_BUILD_IS_DEPENDENCY() else "INVALID_COMPILER",
     compiler_std_version = "",
     compiler_warning_level = "",
-    compiler_disable_specific_warnings = False,
+    compiler_disable_specific_warnings = [""],
     compiler_treat_warnings_as_errors = True,
     compiler_disable_warnings  = False,
     compiler_disable_sanitizer = True
@@ -52,12 +52,12 @@ else:
 
 
 executable_procedure_libs = [
-	f"../../../build_{cc.compiler_name}/{C_BUILD_LIB("ckit_graphics", cc.compiler_name)}", 
-	f"../../../ckit/build_{cc.compiler_name}/{C_BUILD_LIB("ckit", cc.compiler_name)}"
+    f"../../../build_{cc.compiler_name}/{C_BUILD_LIB('ckit_graphics', cc.compiler_name)}",
+    f"../../../ckit/build_{cc.compiler_name}/{C_BUILD_LIB('ckit', cc.compiler_name)}"
 ]
 if IS_WINDOWS():
-	windows_libs = ["User32.lib", "Gdi32.lib", "Opengl32.lib"] if cc.compiler_name == "cl" else ["-lUser32", "-lGdi32", "-lOpengl32"]
-	executable_procedure_libs += windows_libs
+    windows_libs = ["User32.lib", "Gdi32.lib", "Opengl32.lib"] if cc.compiler_name == "cl" else ["-lUser32", "-lGdi32", "-lOpengl32"]
+    executable_procedure_libs += windows_libs
 
 procedures_config = {
     "ckit_graphics_lib": ProcedureConfigElement(
@@ -70,12 +70,12 @@ procedures_config = {
         include_paths = [""],
     ),
 
-	"ckit_graphics_test": ProcedureConfigElement(
+    "ckit_graphics_test": ProcedureConfigElement(
         build_directory = f"./Tests/GraphicsTest/build_{cc.compiler_name}",
         output_name = "ckit_graphics_test.exe",
         source_files = ["../*.c"],
         additional_libs = executable_procedure_libs,
-		compile_time_defines = ["CKIT_WSL"],
+        compile_time_defines = ["CKIT_WSL"],
         compiler_inject_into_args = [],
         include_paths = [""],
     ),
