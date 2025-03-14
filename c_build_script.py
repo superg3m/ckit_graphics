@@ -12,7 +12,7 @@ def FIND_C_BUILD(current_dir):
         FIND_C_BUILD(parent_dir)
 
 FIND_C_BUILD(os.path.abspath(os.path.dirname(__file__)))
-from c_build.source.Utilities import *
+from c_build.source.UserUtilities import *
 from c_build.source.Manager import *
 # --------------------------------------------------------------------------------------s
 
@@ -52,8 +52,8 @@ else:
 
 
 executable_procedure_libs = [
-    f"../../../build_{cc.compiler_name}/{C_BUILD_LIB('ckit_graphics', cc.compiler_name)}",
-    f"../../../ckit/build_{cc.compiler_name}/{C_BUILD_LIB('ckit', cc.compiler_name)}"
+    f"../../../build_{cc.compiler_name}/{GET_LIB_NAME(cc, 'ckit_graphics')}",
+    f"../../../ckit/build_{cc.compiler_name}/{GET_LIB_NAME(cc, 'ckit')}"
 ]
 if IS_WINDOWS():
     windows_libs = ["User32.lib", "Gdi32.lib", "Opengl32.lib"] if cc.compiler_name == "cl" else ["-lUser32", "-lGdi32", "-lOpengl32"]
@@ -62,7 +62,7 @@ if IS_WINDOWS():
 procedures_config = {
     "ckit_graphics_lib": ProcedureConfigElement(
         build_directory = f"./build_{cc.compiler_name}",
-        output_name = C_BUILD_LIB("ckit_graphics", cc.compiler_name),
+        output_name = GET_LIB_NAME(cc, "ckit_graphics"),
         source_files = ["../ckit_graphics.c", "../External_Libraries/stb_image.c", "../External_Libraries/glad/src/glad.c"],
         additional_libs = [],
         compile_time_defines = ["CKIT_WSL"],
