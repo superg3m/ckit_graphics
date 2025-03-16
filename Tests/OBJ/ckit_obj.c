@@ -31,31 +31,29 @@ int main(int argc, char** argv) {
 		{ // RENDER
 			cksgl_clear_color(graphics, CKIT_COLOR_BLACK);
 
-			/*
 			for (int i=0; i < ckit_vector_count(model.faces); i++) {
 				int* face = model.faces[i];
 				for (int j = 0; j < 3; j++) {
 					CKIT_Vector3 v0 = model.verts[face[j]];
 					CKIT_Vector3 v1 = model.verts[face[(j + 1) % 3]];
 
-					int x0 = (v0.x + 1.0) * width / 2.0;
-					int y0 = (v0.y + 1.0) * height / 2.0;
-					int x1 = (v1.x + 1.0) * width / 2.0;
-					int y1 = (v1.y + 1.0) * height / 2.0;
+					int x0 = (int)((v0.x + 1.0) * width / 2.0);
+					int y0 = (int)((v0.y + 1.0) * height / 2.0);
+					int x1 = (int)((v1.x + 1.0) * width / 2.0);
+					int y1 = (int)((v1.y + 1.0) * height / 2.0);
 
 					CKIT_Vector3 p0 = {x0, y0, 0};
 					CKIT_Vector3 p1 = {x1, y1, 0};
 					cksgl_draw_line(graphics, p0, p1, CKIT_COLOR_WHITE);
 				}
 			}
-			*/
 
 			ckit_window_swap_buffers(window);
 		}
 	}
 
+	obj_model_free(&model);
 	ckit_window_free(window); // hmm how can I make this safer?
-
 	ckit_cleanup(TRUE);
 	return 0;
 }
