@@ -21,6 +21,9 @@ OBJ_Model obj_model_create(const char *filename) {
         LOG_PRINT("%s\n", lines[i]);
     }
 
+    ckit_vector_free(lines);
+    ckit_free(file_data);
+
     /*
     while (!in.eof()) {
         std::getline(in, line);
