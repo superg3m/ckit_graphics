@@ -21,7 +21,7 @@ pc: ProjectConfig = ProjectConfig(
     project_dependencies = ["ckit"],
     project_debug_with_visual_studio = True,
     project_rebuild_project_dependencies = True,
-    project_executable_procedures  = ["ckit_obj.exe"]
+    project_executable_procedures  = ["ckit_graphics_test.exe", "ckit_pong.exe", "ckit_obj.exe"]
 )
 
 cc: CompilerConfig = CompilerConfig(

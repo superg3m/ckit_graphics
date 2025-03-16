@@ -18,18 +18,11 @@ OBJ_Model obj_model_create(const char *filename) {
     String* lines = ckit_str_split(file_data, "\n");
 
     for (u32 i = 0; i < ckit_vector_count(lines); i++) {
-        LOG_PRINT("%s\n", lines[i]);
-    }
+        String line = lines[i];
 
-    ckit_vector_free(lines);
-    ckit_free(file_data);
-
-    /*
-    while (!in.eof()) {
-        std::getline(in, line);
-        std::istringstream iss(line.c_str());
-        char trash;
-        if (!line.compare(0, 2, "v ")) {
+        sub_string_line ckg_strview_create(line, 0, 2);
+        ckg_strview_create("v ", 0, 2);
+        if (!line.compare(0, 2, )) {
             iss >> trash;
             Vec3f v;
             for (int i=0;i<3;i++) iss >> v.raw[i];
@@ -46,8 +39,8 @@ OBJ_Model obj_model_create(const char *filename) {
         }
     }
 
-    std::cerr << "# v# " << verts_.size() << " f# "  << faces_.size() << std::endl;
-    */
+    ckit_vector_free(lines);
+    ckit_free(file_data);
 
     return ret;
 }
