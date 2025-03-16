@@ -62,6 +62,10 @@
         "xstddef": "c",
         "xstring": "c",
         "xtr1common": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "fstream": "c",
+        "sstream": "c",
+        "string": "c",
+        "vector": "c"
     }
 }

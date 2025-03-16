@@ -20,8 +20,8 @@ pc: ProjectConfig = ProjectConfig(
     project_name = "ckit_graphics",
     project_dependencies = ["ckit"],
     project_debug_with_visual_studio = True,
-    project_rebuild_project_dependencies = False,
-    project_executable_procedures  = ["ckit_graphics_test.exe", "ckit_pong.exe"]
+    project_rebuild_project_dependencies = True,
+    project_executable_procedures  = ["ckit_obj.exe"]
 )
 
 cc: CompilerConfig = CompilerConfig(
@@ -79,7 +79,7 @@ procedures_config = {
         include_paths = [""],
     ),
 
-    "ckg_pong": ProcedureConfigElement(
+    "ckit_pong": ProcedureConfigElement(
         build_directory = f"./Tests/PongTest/build_{cc.compiler_name}",
         output_name = "ckit_pong.exe",
         source_files = ["../*.c"],
@@ -87,6 +87,16 @@ procedures_config = {
         compile_time_defines = ["CKIT_WSL"],
         compiler_inject_into_args = [],
         include_paths = [""],
+    ),
+
+    "ckit_obj": ProcedureConfigElement(
+        build_directory = f"./Tests/OBJ/build_{cc.compiler_name}",
+        output_name = "ckit_obj.exe",
+        source_files = ["../ckit_obj.c"],
+        additional_libs = executable_procedure_libs,
+        compile_time_defines = ["CKIT_WSL"],
+        compiler_inject_into_args = [],
+        include_paths = ["../../../ckit"],
     ),
 }
 
