@@ -83,37 +83,54 @@ int main() {
 	const float OFFSET = 2.0f;
 	while (!ckit_window_should_quit(window)) {
 		{ // UPDATE
-			Boolean left_check   = ball_rect.position.x <= 0;
-			Boolean right_check  = (ball_rect.position.x + ball_rect.width) >= width_with_padding;
+			int steps = 4;
+			float step_x = ball_x_velocity / steps;
+			float step_y = ball_y_velocity / steps;
 
-			Boolean bottom_check = ball_rect.position.y <= 0;
-			Boolean top_check    = (ball_rect.position.y + ball_rect.height) >= height_with_padding;
+			for (int i = 0; i < steps; i++) {
+				ball_rect.position.x += step_x;
+				ball_rect.position.y += step_y;
 
-			if (left_check || right_check) {
-				ball_x_velocity *= -1;
-				ai_score += left_check;
-				player_score += right_check;
-				LOG_DEBUG("Player Score: %d\n", player_score);
-				LOG_DEBUG("AI Score: %d\n\n", ai_score);
+				// Collision with walls
+				Boolean left_check   = ball_rect.position.x <= 0;
+				Boolean right_check  = (ball_rect.position.x + ball_rect.width) >= width_with_padding;
+				Boolean bottom_check = ball_rect.position.y <= 0;
+				Boolean top_check    = (ball_rect.position.y + ball_rect.height) >= height_with_padding;
+
+				if (left_check || right_check) {
+					ball_x_velocity *= -1;
+					ai_score += left_check;
+					player_score += right_check;
+					LOG_DEBUG("Player Score: %d\n", player_score);
+					LOG_DEBUG("AI Score: %d\n\n", ai_score);
+
+					break; // Avoid multiple bounces in one frame
+				}
+
+				if (bottom_check || top_check) {
+					ball_y_velocity *= -1;
+
+					break;
+				}
+
+				// Paddle collision
+				if (ckit_rectangle_check_aabb_collision(player_rect, ball_rect)) {
+					player_hit = TRUE;
+					ai_hit = FALSE;
+					ball_x_velocity *= -1;
+
+					break;
+				}
+
+				if (ckit_rectangle_check_aabb_collision(ai_rect, ball_rect)) {
+					player_hit = FALSE;
+					ai_hit = TRUE;
+					ball_x_velocity *= -1;
+
+					break;
+				}
 			}
 
-			if (bottom_check || top_check) {
-				ball_y_velocity *= -1;
-			}
-
-			if (ckit_rectangle_check_aabb_collision(player_rect, ball_rect)) {
-				player_hit = TRUE;
-				ai_hit = FALSE;
-				ball_x_velocity *= -1;
-			}
-
-			if (ckit_rectangle_check_aabb_collision(ai_rect, ball_rect)) {
-				player_hit = FALSE;
-				ai_hit = TRUE;
-				ball_x_velocity *= -1;
-				ball_rect.position.x += ball_x_velocity * OFFSET;
-			}
-						
 			ai_rect.position.y = ball_rect.position.y;
 			ball_rect.position.x += ball_x_velocity;
 			ball_rect.position.y += ball_y_velocity;

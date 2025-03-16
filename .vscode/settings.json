@@ -20,6 +20,7 @@
         "ckit_string.h": "c",
         "ckit_graphics_darwin_native_window.c": "cpp",
         "stb_image.h": "c",
-        "glad.h": "c"
+        "glad.h": "c",
+        "cmath": "c"
     }
 }
