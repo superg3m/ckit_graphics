@@ -47,8 +47,9 @@
 
 
 # Dev Notes (for me):
-- Complete rewrite: This will just be a software renderer!
-- ckit_software (cks)
-
-- I want to have full 3d capability I don't care i'm doing it.
 - Tiny software renderer: https://github.com/ssloy/tinyrenderer/wiki/Lesson-0:-getting-started
+
+- Software Renderer
+	- ckgl_window_creation (Required)
+	- ckgl_software (Frame buffer platform agnostic) (I want to have full 3d capability)
+	- ckgl_opengl
