@@ -157,6 +157,11 @@ int main() {
 				ball_color = player_color;
 			}
 
+			CKIT_Vector3 p0 = {200, 200, 0};
+			CKIT_Vector3 p1 = {400, 200, 0};
+			CKIT_Vector3 p2 = {mouse_x, mouse_y, 0};
+			cksgl_draw_triangle(graphics, p0, p1, p2, FALSE, CKIT_COLOR_YELLOW);
+
 			cksgl_draw_quad(graphics, ball_rect, ball_color); // ball
 			cksgl_draw_quad(graphics, ai_rect, ai_color); // ai_paddle
 

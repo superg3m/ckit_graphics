@@ -101,10 +101,11 @@
     } CKSGL;
 
     CKIT_GRAPHICS_API CKSGL cksgl_create(u8** framebuffer, u16* framebuffer_width, u16* framebuffer_height);
+    CKIT_GRAPHICS_API void cksgl_draw_pixel(CKSGL inst, s32 x, s32 y, CKIT_Color color);
     CKIT_GRAPHICS_API void cksgl_draw_quad(CKSGL inst, CKIT_Rectangle2D quad, CKIT_Color color);
     CKIT_GRAPHICS_API void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color);
     CKIT_GRAPHICS_API void cksgl_draw_triangle(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Vector3 p2, Boolean is_filled, CKIT_Color color);
-    CKIT_GRAPHICS_API void cksgl_draw_circle(CKSGL inst, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);\
+    CKIT_GRAPHICS_API void cksgl_draw_circle(CKSGL inst, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);
     CKIT_GRAPHICS_API void cksgl_draw_bitmap(CKSGL inst, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap);
     CKIT_GRAPHICS_API void cksgl_clear_color(CKSGL inst, CKIT_Color color);
 
@@ -437,6 +438,22 @@
         return ret;
     }
 
+    void cksgl_draw_pixel(CKSGL inst, s32 x, s32 y, CKIT_Color color) {
+        const u16 VIEWPORT_WIDTH = *inst.width;
+        const u16 VIEWPORT_HEIGHT = *inst.height;
+    
+        if (x < 0 || x >= VIEWPORT_WIDTH || y < 0 || y >= VIEWPORT_HEIGHT) {
+            return;
+        }
+    
+        size_t final_pixel_index = x + (y * VIEWPORT_WIDTH);
+        u32* dest = (u32*)(*inst.framebuffer);
+    
+        CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color));
+        dest[final_pixel_index] = ckit_color_to_u32(new_back_buffer_color);
+    }
+    
+
     void cksgl_draw_quad(CKSGL inst, CKIT_Rectangle2D quad, CKIT_Color color) {
         const u16 VIEWPORT_WIDTH = *inst.width;
         const u16 VIEWPORT_HEIGHT = *inst.height;
@@ -453,24 +470,61 @@
 
         for (u32 y = top; y < bottom; y++) {
             for (u32 x = left; x < right; x++) {
-                size_t final_pixel_index = x + (y * VIEWPORT_WIDTH);
-
-                CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color));
-                dest[final_pixel_index] = ckit_color_to_u32(new_back_buffer_color);
+                cksgl_draw_pixel(inst, x, y, color);
             }
         }
     }
 
-    void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
-        // Brensenhams line algorithm 
-        // - https://www.youtube.com/watch?v=bfvmPa9eWew
-        // - https://www.youtube.com/watch?v=IDFB5CDpLDE
-
-        // - https://www.youtube.com/watch?v=CceepU1vIKo&t=12s
+    internal void fswap(double* a, double* b) {
+        double temp = *a;
+        *a = *b;
+        *b = temp;
     }
+
+    void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
+        Boolean steep = FALSE; 
+    
+        if (fabs(p0.x - p1.x) < fabs(p0.y - p1.y)) {
+            fswap(&p0.x, &p0.y); 
+            fswap(&p1.x, &p1.y); 
+            steep = TRUE; 
+        } 
+    
+        if (p0.x > p1.x) {
+            fswap(&p0.x, &p1.x); 
+            fswap(&p0.y, &p1.y); 
+        } 
+    
+        int dx = (int)(p1.x - p0.x); 
+        int dy = (int)(p1.y - p0.y); 
+        int derror2 = abs(dy) * 2; 
+        int error2 = 0; 
+        int y = (int)p0.y; 
+        int y_step = (p1.y > p0.y) ? 1 : -1;
+    
+        const u16 VIEWPORT_WIDTH = *inst.width;
+        const u16 VIEWPORT_HEIGHT = *inst.height;
+    
+        for (int x = (int)p0.x; x <= (int)p1.x; x++) {
+            if (steep) { 
+                cksgl_draw_pixel(inst, y, x, color);
+            } else { 
+                cksgl_draw_pixel(inst, x, y, color);
+            } 
+    
+            error2 += derror2; 
+            if (error2 > dx) { 
+                y += y_step; 
+                error2 -= dx * 2; 
+            } 
+        }
+    }    
 
     void cksgl_draw_triangle(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Vector3 p2, Boolean is_filled, CKIT_Color color) {
         // Tiny Software renderer here!
+        cksgl_draw_line(inst, p0, p1, color);
+        cksgl_draw_line(inst, p1, p2, color);
+        cksgl_draw_line(inst, p2, p0, color);
     }
 
     void cksgl_draw_bitmap(CKSGL inst, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap) {
@@ -499,14 +553,13 @@
                 const s64 bmp_y = (y - true_y) / scale_factor;
 
                 s64 color_index = bmp_x - (bmp_y * bitmap.width);
-                u32 color = bmp_memory[color_index];
-                u8 alpha = (color >> 24);
+                u32 color32 = bmp_memory[color_index];
+                u8 alpha = (color32 >> 24);
                 if (alpha == 0) {
                     continue;
                 }
 
-                size_t final_pixel_index = x + (y * VIEWPORT_WIDTH);
-                dest[final_pixel_index] = color;
+                cksgl_draw_pixel(inst, x, y, ckit_color_from_u32(color32));
             }
         }
     }
@@ -565,8 +618,7 @@
                     u32 center_y = true_y + radius;
 
                     if (is_pixel_inside_circle(x, y, center_x, center_y, radius)) {
-                        CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color));
-                        dest[final_pixel_index] = ckit_color_to_u32(new_back_buffer_color);
+                        cksgl_draw_pixel(inst, x, y, color);
                     }
                 }
             }
@@ -579,8 +631,7 @@
                     u32 center_y = start_y + radius;
 
                     if (is_pixel_on_circle_line(x, y, center_x, center_y, radius)) {
-                        CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color)); // alpha blending
-                        dest[final_pixel_index] = ckit_color_to_u32(new_back_buffer_color);
+                        cksgl_draw_pixel(inst, x, y, color);
                     }
                 }
             }
