@@ -45,6 +45,7 @@ int main() {
 
 	ckit_window_bind_icon("../../../assets/c_original_logo_icon_146611.ico");
 	CKIT_Window* window = ckit_window_create(width, height, "GameEngine");
+	CKSGL graphics = cksgl_create(&window->bitmap.memory, (u16*)&window->bitmap.width, (u16*)&window->bitmap.height);
 
 	float x_pos = 40;
 	float y_pos = 40;
@@ -103,7 +104,7 @@ int main() {
 			x_pos += x_velocity;
 			y_pos += y_velocity;
 
-			ckit_window_get_mouse_position(window, &mouse_x, &mouse_y);
+			ckit_window_get_client_mouse_position(window, &mouse_x, &mouse_y);
 		}
 
 		{ // RENDER
@@ -112,10 +113,10 @@ int main() {
 			CKIT_Color red = {255, 0, 0, 105};
 			CKIT_Color green = {0, 255, 0, 75};
 
-			ckit_window_clear_color(window, grey);
+			cksgl_clear_color(graphics, grey);
 
-			ckit_window_draw_bitmap(window, sword_bitmap.width * (mouse_x / 16), sword_bitmap.height * (mouse_x / 32), (mouse_x / 16), sword_bitmap);
-			ckit_window_draw_circle(window, mouse_x, mouse_y, (mouse_x / 2), TRUE, red);
+			cksgl_draw_bitmap(graphics, sword_bitmap.width * (mouse_x / 16), sword_bitmap.height * (mouse_x / 32), (mouse_x / 16), sword_bitmap);
+			cksgl_draw_circle(graphics, mouse_x, mouse_y, (mouse_x / 2), TRUE, red);
 
 			float pixel_offset_from_the_top = ((float)border_size / 2.0);
 			s32 center_x = width_with_padding / 2;
@@ -127,15 +128,14 @@ int main() {
 			s32 top_y = close_factor + (s32)pixel_offset_from_the_top;
 			s32 bottom_y = (s32)(height_with_padding - close_factor + (s32)pixel_offset_from_the_top);
 
-			ckit_window_draw_quad_custom(window, (u32)close_factor, (u32)center_y, (s32)border_size, (s32)adjusted_height, CKIT_COLOR_GREEN); // left
-			ckit_window_draw_quad_custom(window, (u32)right_x, (u32)center_y, (s32)border_size, (s32)adjusted_height, CKIT_COLOR_BLUE); // right
-			ckit_window_draw_quad_custom(window, (u32)center_x, (u32)top_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_PURPLE); // top
-			ckit_window_draw_quad_custom(window, (u32)center_x, (u32)bottom_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_RED); // bottom
+			cksgl_draw_quad_custom(graphics, (u32)close_factor, (u32)center_y, (s32)border_size, (s32)adjusted_height, CKIT_COLOR_GREEN); // left
+			cksgl_draw_quad_custom(graphics, (u32)right_x, (u32)center_y, (s32)border_size, (s32)adjusted_height, CKIT_COLOR_BLUE); // right
+			cksgl_draw_quad_custom(graphics, (u32)center_x, (u32)top_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_PURPLE); // top
+			cksgl_draw_quad_custom(graphics, (u32)center_x, (u32)bottom_y, (s32)adjusted_width, (s32)border_size, CKIT_COLOR_RED); // bottom
 
-
-			ckit_window_draw_quad_custom(window, (u32)width / 2, (u32)height / 2, 400, 200, black);
-			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)player_width, (s32)player_height, green);
-			ckit_window_draw_quad_custom(window, (u32)x_pos, (u32)y_pos, (s32)center_width, (s32)center_height, CKIT_COLOR_PURPLE);
+			cksgl_draw_quad_custom(graphics, (u32)width / 2, (u32)height / 2, 400, 200, black);
+			cksgl_draw_quad_custom(graphics, (u32)x_pos, (u32)y_pos, (s32)player_width, (s32)player_height, green);
+			cksgl_draw_quad_custom(graphics, (u32)x_pos, (u32)y_pos, (s32)center_width, (s32)center_height, CKIT_COLOR_PURPLE);
 
 			ckit_window_swap_buffers(window);
 		}

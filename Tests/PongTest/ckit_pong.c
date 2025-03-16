@@ -52,6 +52,7 @@ int main() {
 
 	ckit_window_bind_icon("../../../assets/c_original_logo_icon_146611.ico");
 	CKIT_Window* window = ckit_window_create(width, height, "CKIT Pong");
+	CKSGL graphics = cksgl_create(&window->bitmap.memory, (u16*)&window->bitmap.width, (u16*)&window->bitmap.height);
 
 	u32 width_with_padding = window->bitmap.width - width_padding;
 	u32 height_with_padding = window->bitmap.height - height_padding;
@@ -118,20 +119,18 @@ int main() {
 			ball_rect.position.y += ball_y_velocity;
 
 
-			ckit_window_get_mouse_position(window, &mouse_x, &mouse_y);
+			ckit_window_get_client_mouse_position(window, &mouse_x, &mouse_y);
 			player_rect.position.y = mouse_y;
 		}
 
 
 		{ // RENDER
-			ckit_window_clear_color(window, CKIT_COLOR_BLACK);
+			cksgl_clear_color(graphics, CKIT_COLOR_BLACK);
 
-			ckit_window_draw_quad(window, x_axis_rect, CKIT_COLOR_RED); // x axis
-			ckit_window_draw_quad(window, y_axis_rect, CKIT_COLOR_BLUE); // y axis
-
-			ckit_window_draw_quad(window, player_rect, player_color); // ACTUAL PLAYER_PADDLE
-
-			ckit_window_draw_quad(window, player_rect, player_color); // ACTUAL PLAYER_PADDLE
+			cksgl_draw_quad(graphics, x_axis_rect, CKIT_COLOR_RED); // x axis
+			cksgl_draw_quad(graphics, y_axis_rect, CKIT_COLOR_BLUE); // y axis
+			cksgl_draw_quad(graphics, player_rect, player_color); // ACTUAL PLAYER_PADDLE
+			cksgl_draw_quad(graphics, player_rect, player_color); // ACTUAL PLAYER_PADDLE
 
 			CKIT_Color ball_color = default_color;
 
@@ -141,8 +140,8 @@ int main() {
 				ball_color = player_color;
 			}
 
-			ckit_window_draw_quad(window, ball_rect, ball_color); // ball
-			ckit_window_draw_quad(window, ai_rect, ai_color); // ai_paddle
+			cksgl_draw_quad(graphics, ball_rect, ball_color); // ball
+			cksgl_draw_quad(graphics, ai_rect, ai_color); // ai_paddle
 
 			ckit_window_swap_buffers(window);
 		}

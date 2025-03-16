@@ -52,7 +52,7 @@ CKIT_GRAPHICS_API void ckit_window_draw_line(CKIT_Window* window, CKIT_Vector3 p
 CKIT_GRAPHICS_API void ckit_window_draw_circle(CKIT_Window* window, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);
 CKIT_GRAPHICS_API void ckit_window_draw_bitmap(CKIT_Window* window, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap);
 CKIT_GRAPHICS_API void ckit_window_swap_buffers(CKIT_Window* window);
-CKIT_GRAPHICS_API void ckit_window_get_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y);
+CKIT_GRAPHICS_API void ckit_window_get_client_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y);
 CKIT_GRAPHICS_API void ckit_window_set_cursor_state(CKIT_Window* window, CKIT_CursorState cursor_state);
 
 #define ckit_window_draw_quad_custom(window, start_x, start_y, width, height, color) ckit_window_draw_quad(window, ckit_rectangle2d_create(start_x, start_y, width, height), color)

@@ -76,27 +76,38 @@
 	CKIT_GRAPHICS_API void ckit_window_bind_cursor(const char* resource_path);
 	CKIT_GRAPHICS_API Boolean ckit_window_should_quit(CKIT_Window* window);
 	CKIT_GRAPHICS_API void ckit_window_swap_buffers(CKIT_Window* window);
-	CKIT_GRAPHICS_API void ckit_window_get_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y);
+	CKIT_GRAPHICS_API void ckit_window_get_client_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y);
 	CKIT_GRAPHICS_API void ckit_window_set_cursor_state(CKIT_Window* window, CKIT_CursorState cursor_state);
 
-    #define ckit_window_draw_quad_custom(window, start_x, start_y, width, height, color) ckit_window_draw_quad(window, ckit_rectangle2d_create(start_x, start_y, width, height), color)
-    #define ckit_window_free(window) window = MACRO_ckit_window_free(window);
     #define ckit_window_free(window) window = MACRO_ckit_window_free(window);
 #endif
 
 #if defined(CKIT_GRAPHICS_INCLUDE_RENDERER)
-    CKIT_GRAPHICS_API void ckit_graphics_software_backend_draw_quad(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, CKIT_Rectangle2D quad, CKIT_Color color);
-	CKIT_GRAPHICS_API void ckit_graphics_software_backend_draw_bitmap(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap);
-	CKIT_GRAPHICS_API void ckit_graphics_software_backend_draw_circle(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);
-	CKIT_GRAPHICS_API void ckit_graphics_software_backend_clear_color(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, CKIT_Color color);
+    #define CKSGL_DEFAULT_BYTE_PER_PIXEL 4
 
+    typedef struct CKSGL {
+        u8** framebuffer;
+        u16* width; 
+        u16* height;
+    } CKSGL;
+
+    CKIT_GRAPHICS_API CKSGL cksgl_create(u8** framebuffer, u16* framebuffer_width, u16* framebuffer_height);
+    CKIT_GRAPHICS_API void cksgl_draw_quad(CKSGL inst, CKIT_Rectangle2D quad, CKIT_Color color);
+    CKIT_GRAPHICS_API void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color);
+    CKIT_GRAPHICS_API void cksgl_draw_triangle(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Vector3 p2, Boolean is_filled, CKIT_Color color);
+    CKIT_GRAPHICS_API void cksgl_draw_circle(CKSGL inst, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);\
+    CKIT_GRAPHICS_API void cksgl_draw_bitmap(CKSGL inst, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap);
+    CKIT_GRAPHICS_API void cksgl_clear_color(CKSGL inst, CKIT_Color color);
+
+    #define cksgl_draw_quad_custom(window, start_x, start_y, width, height, color) cksgl_draw_quad(window, ckit_rectangle2d_create(start_x, start_y, width, height), color)
+
+
+    //============================== OpenGL ==============================
 
     #include "./External_Libraries/glad/include/glad/glad.h"
     #include "./External_Libraries/stb_image.h"
-    // Textures
-    #define TEXTURE_MAX 32
 
-    // Shaders
+    #define TEXTURE_MAX 32
     typedef enum CKIT_ShaderType{
         CKIT_VERTEX_SHADER,
         CKIT_FRAGMENT_SHADER
@@ -151,11 +162,17 @@
             return NULLPTR;
         }
 
+        // Date: March 16, 2025
+        // NOTE(Jovanni): 
+        // Yeah not sure if this is correct tbh.
+        // I try not to reallocate if the previous bitmap size is big enough.
         internal void ckit_window_resize(CKIT_Window* window) {
             if (!window) {
                 return;
             }
 
+            // Date: March 16, 2025
+            // NOTE(Jovanni): Note sure if I have to release the hdc and get a new one every time I resize?
             if (window->hdc) {
                 ReleaseDC(window->handle, window->hdc);
                 window->hdc = NULLPTR;
@@ -164,17 +181,22 @@
 
             RECT windowRect;
             GetWindowRect(window->handle, &windowRect);
+
             window->width = (u16)(windowRect.right - windowRect.left);
             window->height = (u16)(windowRect.bottom - windowRect.top);
-
-            RECT client_rect;
-            GetClientRect(window->handle, &client_rect);
-            window->bitmap.width = (u16)(client_rect.right - client_rect.left);
-            window->bitmap.height = (u16)(client_rect.bottom - client_rect.top);
-
+            
             u32 bits_per_pixel = 32;
             u32 bytes_per_pixel = bits_per_pixel / 8;
             window->bitmap.bytes_per_pixel = bytes_per_pixel;
+
+            RECT client_rect;
+            GetClientRect(window->handle, &client_rect);
+            size_t previous_memory_size = window->bitmap.bytes_per_pixel * window->bitmap.width * window->bitmap.height;
+            size_t memory_size = window->bitmap.bytes_per_pixel * (u16)(client_rect.right - client_rect.left) * (u16)(client_rect.bottom - client_rect.top);
+            if (memory_size > previous_memory_size) {
+                window->bitmap.width = (u16)(client_rect.right - client_rect.left);
+                window->bitmap.height = (u16)(client_rect.bottom - client_rect.top);
+            }
 
             BITMAPINFO bitmap_info;
             bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -191,12 +213,11 @@
 
             window->bitmap_info = bitmap_info;
 
-            size_t memory_size = window->bitmap.bytes_per_pixel * window->bitmap.width * window->bitmap.height;
-            if (window->bitmap.memory && (memory_size != 0)) {
+            if (window->bitmap.memory && (memory_size != 0) && (memory_size > previous_memory_size)) {
                 ckit_free(window->bitmap.memory);
             }
 
-            if (memory_size != 0) {
+            if ((memory_size != 0) && (memory_size > previous_memory_size)) {
                 window->bitmap.memory = ckit_alloc(memory_size);
             }
         }
@@ -210,39 +231,6 @@
                             0, 0, window->bitmap.width, window->bitmap.height, 
                             0, 0, window->bitmap.width, window->bitmap.height,
                             window->bitmap.memory, &window->bitmap_info, DIB_RGB_COLORS, SRCCOPY);
-        }
-
-        // Date: August 31, 2024
-        // TODO(Jovanni): SIMD for optimizations
-
-        // Date: September 10, 2024
-        // TODO(Jovanni): Investigate the top left issue
-        void ckit_window_draw_quad(CKIT_Window* window, CKIT_Rectangle2D quad, CKIT_Color color) {
-            ckit_graphics_software_backend_draw_quad(window->bitmap.memory, window->bitmap.width, window->bitmap.height, quad, color);
-        }
-
-        void ckit_window_draw_line(CKIT_Window* window, CKIT_Vector3 p1, CKIT_Vector3 p2) {
-            // Brensenhams line algorithm 
-            // - https://www.youtube.com/watch?v=bfvmPa9eWew
-            // - https://www.youtube.com/watch?v=IDFB5CDpLDE
-
-            // - https://www.youtube.com/watch?v=CceepU1vIKo&t=12s
-        }
-
-        // Date: August 31, 2024
-        // TODO(Jovanni): SIMD for optimizations
-        void ckit_window_draw_bitmap(CKIT_Window* window, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap) {
-            ckit_graphics_software_backend_draw_bitmap(window->bitmap.memory, window->bitmap.width, window->bitmap.height, start_x, start_y, scale_factor, bitmap);
-        }
-
-        // Date: September 09, 2024
-        // TODO(Jovanni): Switch to the midpoint circle algo because its just better
-        // - https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        // - https://noobtomaster.com/computer-graphics/circle-drawing-algorithms-midpoint-algorithm/
-        // - https://www.thecrazyprogrammer.com/2016/12/bresenhams-midpoint-circle-algorithm-c-c.html
-        // - https://www.youtube.com/watch?v=hpiILbMkF9w
-        void ckit_window_draw_circle(CKIT_Window* window, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color) {
-            ckit_graphics_software_backend_draw_circle(window->bitmap.memory, window->bitmap.width, window->bitmap.height, start_x, start_y, radius, is_filled, color);
         }
 
         LRESULT CALLBACK custom_window_procedure(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -330,10 +318,6 @@
             cursor_handle = (HCURSOR)LoadImageA(GetModuleHandle(NULL), resource_path, IMAGE_CURSOR, 0, 0, LR_LOADFROMFILE|LR_DEFAULTSIZE);
         }
 
-        void ckit_window_clear_color(CKIT_Window* window, CKIT_Color color) {
-            ckit_graphics_software_backend_clear_color(window->bitmap.memory, window->bitmap.width, window->bitmap.height, color);
-        }
-
         CKIT_Window* ckit_window_create(u32 width, u32 height, const char* name) {
             CKIT_Window* ret_window = ckit_alloc_custom(sizeof(CKIT_Window), TAG_CKIT_EXPECTED_USER_FREE);
 
@@ -406,7 +390,7 @@
             return FALSE;
         }
 
-        void ckit_window_get_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y) {
+        void ckit_window_get_client_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y) {
             POINT point;
             ckit_os_get_mouse_position(mouse_x, mouse_y);
             point.x = *mouse_x;
@@ -435,9 +419,18 @@
 #endif
 
 #if defined(CKIT_GRAPHICS_IMPL_RENDERER)
-    void ckit_graphics_software_backend_draw_quad(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, CKIT_Rectangle2D quad, CKIT_Color color) {
-        const s32 VIEWPORT_WIDTH = framebuffer_width;
-        const s32 VIEWPORT_HEIGHT = framebuffer_height;
+    CKSGL cksgl_create(u8** framebuffer, u16* framebuffer_width, u16* framebuffer_height) {
+        CKSGL ret;
+        ret.framebuffer = framebuffer;
+        ret.width = framebuffer_width;
+        ret.height = framebuffer_height;
+
+        return ret;
+    }
+
+    void cksgl_draw_quad(CKSGL inst, CKIT_Rectangle2D quad, CKIT_Color color) {
+        const u16 VIEWPORT_WIDTH = *inst.width;
+        const u16 VIEWPORT_HEIGHT = *inst.height;
 
         s32 true_x = (s32)quad.position.x - (quad.width / 2); 
         s32 true_y = (s32)quad.position.y - (quad.height / 2); 
@@ -447,21 +440,33 @@
         u32 top = (u32)CLAMP(true_y, 0, VIEWPORT_HEIGHT);
         u32 bottom = (u32)CLAMP(true_y + (s32)quad.height, 0, VIEWPORT_HEIGHT);
 
-        u32* dest = (u32*)framebuffer;
+        u32* dest = (u32*)(*inst.framebuffer);
 
         for (u32 y = top; y < bottom; y++) {
             for (u32 x = left; x < right; x++) {
                 size_t final_pixel_index = x + (y * VIEWPORT_WIDTH);
 
-                CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color)); // alpha blending
+                CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color));
                 dest[final_pixel_index] = ckit_color_to_u32(new_back_buffer_color);
             }
         }
     }
 
-    void ckit_graphics_software_backend_draw_bitmap(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap) {
-        const s32 VIEWPORT_WIDTH = framebuffer_width;
-        const s32 VIEWPORT_HEIGHT = framebuffer_height;
+    void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
+        // Brensenhams line algorithm 
+        // - https://www.youtube.com/watch?v=bfvmPa9eWew
+        // - https://www.youtube.com/watch?v=IDFB5CDpLDE
+
+        // - https://www.youtube.com/watch?v=CceepU1vIKo&t=12s
+    }
+
+    void cksgl_draw_triangle(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Vector3 p2, Boolean is_filled, CKIT_Color color) {
+        // Tiny Software renderer here!
+    }
+
+    void cksgl_draw_bitmap(CKSGL inst, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap) {
+        const u16 VIEWPORT_WIDTH = *inst.width;
+        const u16 VIEWPORT_HEIGHT = *inst.height;
 
         const s32 scaled_bmp_width = bitmap.width * scale_factor;
         const s32 scaled_bmp_height = bitmap.height * scale_factor;
@@ -474,7 +479,7 @@
         u32 top = (u32)CLAMP(true_y, 0, VIEWPORT_HEIGHT);
         u32 bottom = (u32)CLAMP(true_y + scaled_bmp_height, 0, VIEWPORT_HEIGHT);
 
-        u32* dest = (u32*)framebuffer;
+        u32* dest = (u32*)(*inst.framebuffer);
         u32* bmp_memory = (u32*)bitmap.memory + ((bitmap.height - 1) * bitmap.width);
 
         // Date: August 31, 2024
@@ -523,13 +528,13 @@
     // - https://noobtomaster.com/computer-graphics/circle-drawing-algorithms-midpoint-algorithm/
     // - https://www.thecrazyprogrammer.com/2016/12/bresenhams-midpoint-circle-algorithm-c-c.html
     // - https://www.youtube.com/watch?v=hpiILbMkF9w
-    void ckit_graphics_software_backend_draw_circle(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color) {
+    void cksgl_draw_circle(CKSGL inst, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color) {
         if (radius <= 0) {
             return;
         }
 
-        const uint32_t VIEWPORT_WIDTH = framebuffer_width;
-        const uint32_t VIEWPORT_HEIGHT = framebuffer_height;
+        const u16 VIEWPORT_WIDTH = *inst.width;
+        const u16 VIEWPORT_HEIGHT = *inst.height;
 
         const u32 diameter = radius * 2;
 
@@ -537,11 +542,11 @@
         s32 true_y = start_y - (radius);
 
         u32 left = CLAMP(true_x, 0, VIEWPORT_WIDTH);
-        u32 right = CLAMP(true_x + (s32)diameter, 0, VIEWPORT_WIDTH); // add one so there is a real center point in the circle
+        u32 right = CLAMP(true_x + (s32)diameter, 0, VIEWPORT_WIDTH);
         u32 top = CLAMP(true_y, 0, VIEWPORT_HEIGHT);
         u32 bottom = CLAMP(true_y + (s32)diameter, 0, VIEWPORT_HEIGHT); // kyle wuz here skool sux
 
-        u32* dest = (u32*)framebuffer;
+        u32* dest = (u32*)(*inst.framebuffer);
 
         if (is_filled) {
             for (s32 y = top; y < bottom; y++) {
@@ -551,7 +556,7 @@
                     u32 center_y = true_y + radius;
 
                     if (is_pixel_inside_circle(x, y, center_x, center_y, radius)) {
-                        CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color)); // alpha blending
+                        CKIT_Color new_back_buffer_color = ckit_color_u32_alpha_blend(dest[final_pixel_index], ckit_color_to_u32(color));
                         dest[final_pixel_index] = ckit_color_to_u32(new_back_buffer_color);
                     }
                 }
@@ -573,15 +578,18 @@
         }
     }
 
-    void ckit_graphics_software_backend_clear_color(u8* framebuffer, u32 framebuffer_width, u32 framebuffer_height, CKIT_Color color) {
-        int stride = framebuffer_width * 4;
-        u8* row = framebuffer;    
-        for(u32 y = 0; y < framebuffer_height; y++) {
+    void cksgl_clear_color(CKSGL inst, CKIT_Color color) {
+        u16 width = *inst.width;
+        u16 height = *inst.height;
+        int stride = width * CKSGL_DEFAULT_BYTE_PER_PIXEL;
+        u8* row = (u8*)(*inst.framebuffer); 
+
+        for(u32 y = 0; y < height; y++) {
             u32* pixel = (u32*)row;
-            for(u32 x = 0; x < framebuffer_width; x++)
-            {
+            for(u32 x = 0; x < width; x++) {
                 *pixel++ = ckit_color_to_u32(color);
             }
+
             row += stride;
         }
     }
