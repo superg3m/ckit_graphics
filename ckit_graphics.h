@@ -28,17 +28,15 @@
     #define CKIT_CURSOR_STATE_GRAB 3
 
     #if defined(PLATFORM_WINDOWS)
-        #include <windows.h>
-
         typedef struct CKIT_Window {
             HINSTANCE instance_handle;
             HWND handle;
             HDC	hdc;
+            const char* name;
+            CKIT_Bitmap bitmap;
+            BITMAPINFO bitmap_info;
             u16 height;
             u16 width;
-            const char* name;
-            BITMAPINFO bitmap_info;
-            CKIT_Bitmap bitmap;
         } CKIT_Window;
     #elif defined(PLATFORM_LINUX)
         #include <x11/xlib.h>
@@ -77,11 +75,6 @@
 	CKIT_GRAPHICS_API void ckit_window_bind_icon(const char* resource_path);
 	CKIT_GRAPHICS_API void ckit_window_bind_cursor(const char* resource_path);
 	CKIT_GRAPHICS_API Boolean ckit_window_should_quit(CKIT_Window* window);
-	CKIT_GRAPHICS_API void ckit_window_clear_color(CKIT_Window* window, CKIT_Color color);
-	CKIT_GRAPHICS_API void ckit_window_draw_quad(CKIT_Window* window, CKIT_Rectangle2D quad, CKIT_Color color);
-	CKIT_GRAPHICS_API void ckit_window_draw_line(CKIT_Window* window, CKIT_Vector3 p1, CKIT_Vector3 p2);
-	CKIT_GRAPHICS_API void ckit_window_draw_circle(CKIT_Window* window, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);
-	CKIT_GRAPHICS_API void ckit_window_draw_bitmap(CKIT_Window* window, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap);
 	CKIT_GRAPHICS_API void ckit_window_swap_buffers(CKIT_Window* window);
 	CKIT_GRAPHICS_API void ckit_window_get_mouse_position(CKIT_Window* window, s32* mouse_x, s32* mouse_y);
 	CKIT_GRAPHICS_API void ckit_window_set_cursor_state(CKIT_Window* window, CKIT_CursorState cursor_state);
