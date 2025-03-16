@@ -50,6 +50,6 @@
 - Tiny software renderer: https://github.com/ssloy/tinyrenderer/wiki/Lesson-0:-getting-started
 
 - Software Renderer
-	- ckgl_window_creation (Required)
-	- ckgl_software (Frame buffer platform agnostic) (I want to have full 3d capability)
-	- ckgl_opengl
+	- ckit_window_creation (Required)
+		- dropFileCallback()
+	- ckit_software (Frame buffer platform agnostic) (I want to have full 3d capability)
