@@ -13,15 +13,13 @@ int main(int argc, char** argv) {
 	int mouse_x, mouse_y = 0;
 	const float OFFSET = 2.0f;
 
-
-
 	OBJ_Model model;
 
 	if (2 == argc) {
-        model = obj_model_create(argv[1]);
-    } else {
-        model = obj_model_create("../african_head.obj_wave");
-    }
+		model = obj_model_create(argv[1]);
+	} else {
+		model = obj_model_create("../african_head.obj_wave");
+	}
 
 	while (!ckit_window_should_quit(window)) {
 		{ // UPDATE
@@ -31,22 +29,28 @@ int main(int argc, char** argv) {
 		{ // RENDER
 			cksgl_clear_color(graphics, CKIT_COLOR_BLACK);
 
-			for (int i=0; i < ckit_vector_count(model.faces); i++) {
-				int* face = model.faces[i];
+			for (int i=0; i < ckit_vector_count(model.faces) - 3; i++) {
 				for (int j = 0; j < 3; j++) {
-					CKIT_Vector3 v0 = model.verts[face[j]];
-					CKIT_Vector3 v1 = model.verts[face[(j + 1) % 3]];
+					u32 f_index0 = model.faces[i + j][0];
+					u32 f_index1 = model.faces[i + ((j + 1) % 3)][0];
+
+					CKIT_Vector3 v0 = model.verts[f_index0];
+					CKIT_Vector3 v1 = model.verts[f_index1];
+
+					u32 y_offset = 0;
 
 					int x0 = (int)((v0.x + 1.0) * width / 2.0);
-					int y0 = (int)((v0.y + 1.0) * height / 2.0);
+					int y0 = (int)((v0.y + 1.0) * height / 2.0) + y_offset;
 					int x1 = (int)((v1.x + 1.0) * width / 2.0);
-					int y1 = (int)((v1.y + 1.0) * height / 2.0);
+					int y1 = (int)((v1.y + 1.0) * height / 2.0) + y_offset;
 
 					CKIT_Vector3 p0 = {x0, y0, 0};
 					CKIT_Vector3 p1 = {x1, y1, 0};
 					cksgl_draw_line(graphics, p0, p1, CKIT_COLOR_WHITE);
 				}
 			}
+
+			cksgl_flip_vertically(graphics);
 
 			ckit_window_swap_buffers(window);
 		}

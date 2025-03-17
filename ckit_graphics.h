@@ -108,6 +108,7 @@
     CKIT_GRAPHICS_API void cksgl_draw_circle(CKSGL inst, s32 start_x, s32 start_y, s32 radius, Boolean is_filled, CKIT_Color color);
     CKIT_GRAPHICS_API void cksgl_draw_bitmap(CKSGL inst, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap);
     CKIT_GRAPHICS_API void cksgl_clear_color(CKSGL inst, CKIT_Color color);
+    CKIT_GRAPHICS_API void cksgl_flip_vertically(CKSGL inst);
 
     #define cksgl_draw_quad_custom(window, start_x, start_y, width, height, color) cksgl_draw_quad(window, ckit_rectangle2d_create(start_x, start_y, width, height), color)
 
@@ -634,6 +635,34 @@
                         cksgl_draw_pixel(inst, x, y, color);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * @brief This needs so much work... I don't understand why set pixel doesn't work here?
+     * 
+     * @param inst 
+     */
+    void cksgl_flip_vertically(CKSGL inst) {
+        u16 width = *inst.width;
+        u16 height = *inst.height;
+        u32* pixels = (u32*)(*inst.framebuffer);
+    
+        for (s32 top_y = 0; top_y < height / 2; top_y++) {
+            u32 bottom_y = (height - 1) - top_y;
+            for (u32 x = 0; x < width; x++) {
+                u32 index_top = x + (top_y * width);
+                u32 index_bottom = x + (bottom_y * width);
+
+                u32 pixel_top = pixels[index_top];
+                u32 pixel_bottom = pixels[index_bottom];
+
+                pixels[index_top] = pixel_bottom;
+                pixels[index_bottom] = pixel_top;
+
+                // cksgl_draw_pixel(inst, x, top_y, ckit_color_from_u32(pixel_bottom));
+                // cksgl_draw_pixel(inst, x, bottom_y, ckit_color_from_u32(pixel_top));
             }
         }
     }
