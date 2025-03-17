@@ -251,14 +251,14 @@
                     LOG_SUCCESS("Window Created!\n");
                 } break;
 
-                case WM_SIZE: { // Resize
+                case WM_SIZING: { // Resize
                     RECT client_rect;
                     GetClientRect(handle, &client_rect);
                     u32 width = client_rect.right - client_rect.left;
                     u32 height = client_rect.bottom - client_rect.top;
 
                     CKIT_Window* window = find_ckit_window_by_handle(handle);
-                    ckit_window_resize(window); // should only do the area/region that need to be repainted ideally for optimization
+                    ckit_window_resize(window);
                 } break;
 
                 case WM_CLOSE: {
@@ -294,22 +294,16 @@
                     return DefWindowProcA(handle, message, wParam, lParam);
                 } break;
 
-                /*
                 case WM_PAINT: { // Repaint window when its dirty
                     PAINTSTRUCT paint;
                     HDC hdc = BeginPaint(handle, &paint);
-                    u32 x = paint.rcPaint.left;
-                    u32 y = paint.rcPaint.top;
 
-                    // Maybe you will need this but for right now i'm saying you don't need this
+                    // SetPropA(handle, "", something_here)
+                    // ckit_window_update_callback(handle);
+                    // ckit_window_render_callback(handle);
 
-                    RECT ClientRect;
-                    GetClientRect(handle, &ClientRect);
-
-                    win32_draw_bitmap(hdc, &bitmap, &ClientRect, x, y);
                     EndPaint(handle, &paint);
                 } break;
-                */
                 
                 default: {
                     result = DefWindowProcA(handle, message, wParam, lParam);
