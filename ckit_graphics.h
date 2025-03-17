@@ -110,7 +110,7 @@
     CKIT_GRAPHICS_API void cksgl_clear_color(CKSGL inst, CKIT_Color color);
     CKIT_GRAPHICS_API void cksgl_flip_vertically(CKSGL inst);
 
-    #define cksgl_draw_quad_custom(window, start_x, start_y, width, height, color) cksgl_draw_quad(window, ckit_rectangle2d_create(start_x, start_y, width, height), color)
+    #define cksgl_draw_quad_custom(inst, start_x, start_y, width, height, color) cksgl_draw_quad(inst, ckit_rectangle2d_create(start_x, start_y, width, height), color)
 
 
     //============================== OpenGL ==============================
@@ -251,7 +251,7 @@
                     LOG_SUCCESS("Window Created!\n");
                 } break;
 
-                case WM_SIZING: { // Resize
+                case WM_SIZE: { // Resize
                     RECT client_rect;
                     GetClientRect(handle, &client_rect);
                     u32 width = client_rect.right - client_rect.left;
@@ -476,42 +476,73 @@
         *b = temp;
     }
 
-    void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
-        Boolean steep = FALSE; 
-    
-        if (fabs(p0.x - p1.x) < fabs(p0.y - p1.y)) {
-            fswap(&p0.x, &p0.y); 
-            fswap(&p1.x, &p1.y); 
-            steep = TRUE; 
-        } 
-    
-        if (p0.x > p1.x) {
-            fswap(&p0.x, &p1.x); 
-            fswap(&p0.y, &p1.y); 
-        } 
-    
+    internal void draw_line_vertical(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
+        if (p0.y > p1.y) {
+            fswap(&p0.x, &p1.x);
+            fswap(&p0.y, &p1.y);
+        }
+        
         int dx = (int)(p1.x - p0.x); 
         int dy = (int)(p1.y - p0.y); 
-        int derror2 = abs(dy) * 2; 
-        int error2 = 0; 
-        int y = (int)p0.y; 
-        int y_step = (p1.y > p0.y) ? 1 : -1;
-    
-        const u16 VIEWPORT_WIDTH = *inst.width;
-        const u16 VIEWPORT_HEIGHT = *inst.height;
-    
-        for (int x = (int)p0.x; x <= (int)p1.x; x++) {
-            if (steep) { 
-                cksgl_draw_pixel(inst, y, x, color);
-            } else { 
-                cksgl_draw_pixel(inst, x, y, color);
-            } 
-    
-            error2 += derror2; 
-            if (error2 > dx) { 
-                y += y_step; 
-                error2 -= dx * 2; 
-            } 
+
+        int direction = dx < 0 ? -1 : 1;
+        dx *= direction;
+
+        if (dy == 0) {
+            return;
+        }
+
+        int x = (int)p0.x;
+        int p = (2 * dx) - dy;
+
+        for (s32 i = 0; i < dy + 1; i++) {
+            cksgl_draw_pixel(inst, x, (s32)p0.y + i, color);
+
+            if (p >= 0) {
+                x += direction;
+                p = p - (2 * dy);
+            }
+
+            p = p + (2 * dx);
+        }
+    }
+
+    internal void draw_line_horizontal(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
+        if (p0.x > p1.x) {
+            fswap(&p0.x, &p1.x);
+            fswap(&p0.y, &p1.y);
+        }
+        
+        int dx = (int)(p1.x - p0.x); 
+        int dy = (int)(p1.y - p0.y); 
+
+        int direction = dy < 0 ? -1 : 1;
+        dy *= direction;
+
+        if (dx == 0) {
+            return;
+        }
+
+        int y = (int)p0.y;
+        int p = (2 * dy) - dx;
+
+        for (s32 i = 0; i < dx + 1; i++) {
+            cksgl_draw_pixel(inst, (s32)p0.x + i, y, color);
+
+            if (p >= 0) {
+                y += direction;
+                p = p - (2 * dx);
+            }
+
+            p = p + (2 * dy);
+        }
+    }
+
+    void cksgl_draw_line(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Color color) {
+        if (fabs(p1.x - p0.x) > fabs(p1.y - p0.y)) {
+            draw_line_horizontal(inst, p0, p1, color);
+        } else {
+            draw_line_vertical(inst, p0, p1, color);
         }
     }    
 
@@ -520,7 +551,6 @@
             cksgl_draw_line(inst, p0, p1, color);
             cksgl_draw_line(inst, p1, p2, color);
             cksgl_draw_line(inst, p2, p0, color);
-
             // test if point is inside triangle
             // https://jtsorlinis.github.io/rendering-tutorial/
             // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
