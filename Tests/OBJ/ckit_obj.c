@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 		{ // RENDER
 			cksgl_clear_color(graphics, CKIT_COLOR_BLACK);
 
-			for (int i = 0; i < ckit_vector_count(model.faces) - 2; i++) {
+			for (int i = 0; i < ckit_vector_count(model.faces) - 2; i += 3) {
 				u32 f_index0 = model.faces[i][0];
 				u32 f_index1 = model.faces[i + 1][0];
 				u32 f_index2 = model.faces[i + 2][0];
