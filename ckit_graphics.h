@@ -522,10 +522,19 @@
     }    
 
     void cksgl_draw_triangle(CKSGL inst, CKIT_Vector3 p0, CKIT_Vector3 p1, CKIT_Vector3 p2, Boolean is_filled, CKIT_Color color) {
-        // Tiny Software renderer here!
-        cksgl_draw_line(inst, p0, p1, color);
-        cksgl_draw_line(inst, p1, p2, color);
-        cksgl_draw_line(inst, p2, p0, color);
+        if (is_filled) {
+            cksgl_draw_line(inst, p0, p1, color);
+            cksgl_draw_line(inst, p1, p2, color);
+            cksgl_draw_line(inst, p2, p0, color);
+
+            // test if point is inside triangle
+            // https://jtsorlinis.github.io/rendering-tutorial/
+            // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
+        } else {
+            cksgl_draw_line(inst, p0, p1, color);
+            cksgl_draw_line(inst, p1, p2, color);
+            cksgl_draw_line(inst, p2, p0, color);
+        }
     }
 
     void cksgl_draw_bitmap(CKSGL inst, s32 start_x, s32 start_y, u32 scale_factor, CKIT_Bitmap bitmap) {
