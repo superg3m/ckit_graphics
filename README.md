@@ -47,7 +47,7 @@
 
 
 # Dev Notes (for me):
-- Tiny software renderer: https://github.com/ssloy/tinyrenderer/wiki/Lesson-0:-getting-started
+- Tiny software renderer: https://github.com/ssloy/tinyrenderer/wiki/Lesson-2:-Triangle-rasterization-and-back-face-culling
 
 - Software Renderer
 	- ckit_window_creation (Required)
