@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 	if (2 == argc) {
 		model = obj_model_create(argv[1]);
 	} else {
-		model = obj_model_create("../african_head.obj_wave");
+		model = obj_model_create("../../african_head.obj_wave");
 	}
 
 	while (!ckit_window_should_quit(window)) {

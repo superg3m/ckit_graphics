@@ -21,7 +21,7 @@ pc: ProjectConfig = ProjectConfig(
     project_dependencies = ["ckit"],
     project_debug_with_visual_studio = True,
     project_rebuild_project_dependencies = True,
-    project_executable_procedures  = ["ckit_obj.exe", "ckit_graphics_test.exe", "ckit_pong.exe"]
+    project_executable_names  = ["ckit_obj.exe", "ckit_graphics_test.exe", "ckit_pong.exe"]
 )
 
 cc: CompilerConfig = CompilerConfig(
@@ -50,53 +50,58 @@ else:
     cc.compiler_disable_specific_warnings = ["deprecated", "pointer-sign", "parentheses", "unused-variable", "missing-braces"]
 
 
+build_postfix = f"build_{cc.compiler_name}/{C_BUILD_BUILD_TYPE()}"
 executable_procedure_libs = [
-    f"../../../build_{cc.compiler_name}/{GET_LIB_NAME(cc, 'ckit_graphics')}",
-    f"../../../ckit/build_{cc.compiler_name}/{GET_LIB_NAME(cc, 'ckit')}"
+    f"../../../../{build_postfix}/{GET_LIB_NAME(cc, 'ckit_graphics')}",
+    f"../../../../ckit/{build_postfix}/{GET_LIB_NAME(cc, 'ckit')}"
 ]
 if IS_WINDOWS():
-    windows_libs = ["User32.lib", "Gdi32.lib", "Opengl32.lib"] if cc.compiler_name == "cl" else ["-lUser32", "-lGdi32", "-lOpengl32"]
+    windows_libs = [GET_LIB_FLAG(cc, "User32"), GET_LIB_FLAG(cc, "Gdi32"), GET_LIB_FLAG(cc, "Opengl32")]
     executable_procedure_libs += windows_libs
 
 procedures_config = {
-    "ckit_graphics_lib": ProcedureConfigElement(
-        build_directory = f"./build_{cc.compiler_name}",
+    "ckit_graphics_lib": ProcedureConfig(
+        build_directory = f"./{build_postfix}",
         output_name = GET_LIB_NAME(cc, "ckit_graphics"),
-        source_files = ["../ckit_graphics.c", "../External_Libraries/stb_image.c", "../External_Libraries/glad/src/glad.c"],
+        source_files = [
+            "../../ckit_graphics.c", 
+            "../../External_Libraries/stb_image.c", 
+            "../../External_Libraries/glad/src/glad.c"],
         additional_libs = [],
         compile_time_defines = ["CKIT_WSL"],
         compiler_inject_into_args = [],
         include_paths = [""],
     ),
 
-    "ckit_graphics_test": ProcedureConfigElement(
-        build_directory = f"./Tests/GraphicsTest/build_{cc.compiler_name}",
+
+    "ckit_graphics_test": ProcedureConfig(
+        build_directory = f"./Tests/GraphicsTest/{build_postfix}",
         output_name = "ckit_graphics_test.exe",
-        source_files = ["../*.c"],
+        source_files = ["../../*.c"],
         additional_libs = executable_procedure_libs,
         compile_time_defines = ["CKIT_WSL"],
         compiler_inject_into_args = [],
         include_paths = [""],
     ),
 
-    "ckit_pong": ProcedureConfigElement(
-        build_directory = f"./Tests/PongTest/build_{cc.compiler_name}",
+    "ckit_pong": ProcedureConfig(
+        build_directory = f"./Tests/PongTest/{build_postfix}",
         output_name = "ckit_pong.exe",
-        source_files = ["../*.c"],
+        source_files = ["../../*.c"],
         additional_libs = executable_procedure_libs,
         compile_time_defines = ["CKIT_WSL"],
         compiler_inject_into_args = [],
         include_paths = [""],
     ),
 
-    "ckit_obj": ProcedureConfigElement(
-        build_directory = f"./Tests/OBJ/build_{cc.compiler_name}",
+    "ckit_obj": ProcedureConfig(
+        build_directory = f"./Tests/OBJ/{build_postfix}",
         output_name = "ckit_obj.exe",
-        source_files = ["../ckit_obj.c"],
+        source_files = ["../../ckit_obj.c"],
         additional_libs = executable_procedure_libs,
         compile_time_defines = ["CKIT_WSL"],
         compiler_inject_into_args = [],
-        include_paths = ["../../../ckit"],
+        include_paths = ["../../../../ckit"],
     ),
 }
 

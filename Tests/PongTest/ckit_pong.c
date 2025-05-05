@@ -50,7 +50,7 @@ int main() {
 	LOG_DEBUG("TESTING\n");
 	LOG_SUCCESS("TESTING\n");
 
-	ckit_window_bind_icon("../../../assets/c_original_logo_icon_146611.ico");
+	ckit_window_bind_icon("../../../../assets/c_original_logo_icon_146611.ico");
 	CKIT_Window* window = ckit_window_create(width, height, "CKIT Pong");
 	CKSGL graphics = cksgl_create(&window->bitmap.memory, (u16*)&window->bitmap.width, (u16*)&window->bitmap.height);
 
