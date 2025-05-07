@@ -18,7 +18,12 @@ from c_build.source.Manager import *
 
 pc: ProjectConfig = ProjectConfig(
     project_name = "ckit_graphics",
-    project_dependencies = ["ckit"],
+    project_dependencies = [
+        Dependency(
+            name="ckit",
+            branch_name="main",
+        ),
+    ],
     project_debug_with_visual_studio = True,
     project_rebuild_project_dependencies = True,
     project_executable_names  = ["ckit_obj.exe", "ckit_graphics_test.exe", "ckit_pong.exe"]
