@@ -43,8 +43,5 @@ build_cl/
 
 build_cl/
 c_build/
-*.ps1
-!bootstrap.ps1
 ckg/
 ckit/
-c_build_dependency_cache_*.json
